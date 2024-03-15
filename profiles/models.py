@@ -40,16 +40,16 @@ class UserManager(UserManager):
         user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
         return user
     
-    def create_teacheruser(self, email, username, first_name, last_name, password=None, is_staff=False, is_teacher=True, is_superuser=False):
+    def create_teacheruser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=False, is_teacher=True, is_superuser=False):
         if not is_teacher:
             raise ValueError('Teachers must have is_teacher=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_staff, is_teacher, is_superuser)
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
         return user
     
-    def create_superuser(self, email, username, first_name, last_name ,password=None, is_staff=True, is_teacher=False, is_superuser=True):
+    def create_superuser(self, email, username, first_name, last_name ,password=None, is_student=False, is_staff=True, is_teacher=False, is_superuser=True):
         if not (is_staff and is_superuser):
             raise ValueError('Superusers must have is_staff=True and is_superuser=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_staff, is_teacher, is_superuser)        
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)        
         return user
     
     
@@ -72,11 +72,11 @@ class User(AbstractUser, PermissionsMixin):
     objects = UserManager()
     
     
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
+    # def has_perm(self, perm, obj=None):
+    #     return self.is_superuser
 
-    def has_module_perms(self, app_label):
-        return self.is_superuser
+    # def has_module_perms(self, app_label):
+    #     return self.is_superuser
     
     def __str__(self):
         return self.username
