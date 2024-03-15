@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Profile, Student, Teacher
+from django.contrib.auth.admin import UserAdmin
+from .models import User
 # Register your models here.
 
-admin.site.register(Profile)
-admin.site.register(Student)
-admin.site.register(Teacher)
+class UserAdmin(UserAdmin):
+    ordering = ('email',)
+admin.site.register(User)
