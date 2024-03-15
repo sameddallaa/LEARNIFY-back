@@ -1,11 +1,11 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, UserManager
 # Create your models here.
 
-class UserManager(BaseUserManager):
-    def create_user(self, email, username, first_name, last_name, password=None, is_staff=False, is_teacher=False, is_superuser=False):
+class UserManager(UserManager):
+    def create_user(self, email, username, first_name, last_name, password=None ,is_student=False, is_staff=False, is_teacher=False, is_superuser=False):
         if not email:
             raise ValueError('Users must have an email address')
         if not username:
@@ -19,6 +19,7 @@ class UserManager(BaseUserManager):
             username=username,
             first_name=first_name,
             last_name=last_name,
+            is_student=is_student,
             is_staff=is_staff,
             is_superuser=is_superuser,
             is_teacher=is_teacher,
@@ -27,10 +28,16 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_staffuser(self, email, username, first_name, last_name, password=None, is_staff=True, is_teacher=False, is_superuser=False):
+    def create_studentuser(self, email, username, first_name, last_name, password=None, is_student=True, is_staff=False, is_teacher=False, is_superuser=False):
+        if not is_student:
+            raise ValueError('Staff users must have is_staff=True')
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
+        return user
+    
+    def create_staffuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True, is_teacher=False, is_superuser=False):
         if not is_staff:
             raise ValueError('Staff users must have is_staff=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_staff, is_teacher, is_superuser)
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
         return user
     
     def create_teacheruser(self, email, username, first_name, last_name, password=None, is_staff=False, is_teacher=True, is_superuser=False):
@@ -39,18 +46,21 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, username, first_name, last_name, password, is_staff, is_teacher, is_superuser)
         return user
     
-    def create_superuser(self, email, username, first_name, last_name, password=None,  is_staff=False, is_teacher=False, is_superuser=False):
-        if not is_superuser or not is_staff:
+    def create_superuser(self, email, username, first_name, last_name ,password=None, is_staff=True, is_teacher=False, is_superuser=True):
+        if not (is_staff and is_superuser):
             raise ValueError('Superusers must have is_staff=True and is_superuser=True')
         user = self.create_user(email, username, first_name, last_name, password, is_staff, is_teacher, is_superuser)        
         return user
-class User(AbstractUser):
-    email = models.EmailField(max_length=255, default="needs_email@email.com") #ADD unique = True
-    username = models.CharField(max_length=255, unique=True) # add unique = True and null = False
+    
+    
+
+class User(AbstractUser, PermissionsMixin):       
+    
+    email = models.EmailField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, unique=True, null=False)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -61,6 +71,12 @@ class User(AbstractUser):
     
     objects = UserManager()
     
+    
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
+    
     def __str__(self):
         return self.username
-
