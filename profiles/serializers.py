@@ -3,11 +3,6 @@ from rest_framework import serializers
 from .users import User
 from django.contrib.auth.hashers import make_password
 
-# class StudentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Student
-#         fields = '__all__'
-
 class SignupSerializer(serializers.ModelSerializer):
     
     email = serializers.EmailField()
