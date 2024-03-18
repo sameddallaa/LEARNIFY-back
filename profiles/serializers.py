@@ -4,7 +4,6 @@ from .users import User
 from django.contrib.auth.hashers import make_password
 
 class SignupSerializer(serializers.ModelSerializer):
-    
     email = serializers.EmailField()
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)

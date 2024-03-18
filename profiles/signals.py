@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .users import User
 from .models import Student, Teacher
@@ -13,17 +13,12 @@ def create_profile(sender, instance, created, **kwargs):
         teacher = Teacher.objects.create(user=instance)
         teacher.save()
         
-@receiver(pre_delete, sender=User)
+@receiver(post_delete, sender=Student)
 def delete_profile(sender, instance, **kwargs):
-    if instance.is_student:
-        try:
-            student = Student.objects.get(user=instance)
-            student.delete()
-        except Student.DoesNotExist:
-            pass
-    elif instance.is_teacher:
-        try:
-            teacher = Teacher.objects.get(user=instance)
-            teacher.delete()
-        except Teacher.DoesNotExist:
-            pass
+    user = instance.user
+    user.delete()
+    
+@receiver(post_delete, sender=Teacher)
+def delete_profile(sender, instance, **kwargs):
+    user = instance.user
+    user.delete()
