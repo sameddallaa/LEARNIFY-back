@@ -1,9 +1,19 @@
 from django.shortcuts import render
-from rest_framework import generics
-# from .models import Student
-# from .serializers import StudentSerializer
-# Create your views here.
+from rest_framework import generics, status, permissions
+from rest_framework.response import Response
+from .models import User
+from .serializers import SignupSerializer
 
-# class StudentView(generics.ListCreateAPIView):
-#     queryset = Student.objects.all()
-#     serializer_class = StudentSerializer
+
+class SignupView(generics.GenericAPIView):
+    
+    queryset = User.objects.all()
+    serializer_class = SignupSerializer
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        data = request.data 
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
