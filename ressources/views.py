@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Course, Subject
 from .serializers import CourseSerializer, SubjectSerializer
 from rest_framework import generics, permissions
-from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission
+from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 # Create your views here.
 
 
@@ -42,6 +42,7 @@ class CoursesListView(generics.ListAPIView):
 class CoursesCreateView(generics.CreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [IsEditorTeacherPermission]
 
 class CoursesUpdateView(generics.UpdateAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
@@ -53,3 +54,4 @@ class CoursesDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     lookup_field = 'id'    
+    permission_classes = [IsEditorTeacherOrAdminPermission]

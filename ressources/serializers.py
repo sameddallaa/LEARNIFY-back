@@ -18,7 +18,6 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = '__all__'
-        
     def create(self, validated_data):
         if not validated_data.get('description'):
             validated_data['description'] = 'Aucune description'
