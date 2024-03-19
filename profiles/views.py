@@ -4,6 +4,7 @@ from rest_framework import generics, status, permissions, authentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from .users import User
+from .models import Student, Teacher
 from .serializers import SignupSerializer
 from rest_framework.views import APIView
 
@@ -11,14 +12,31 @@ class SignupView(generics.GenericAPIView):
     
     queryset = User.objects.all()
     serializer_class = SignupSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     
     def post(self, request, *args, **kwargs):
         data = request.data 
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def perform_create(self, serializer):
+        user = serializer.save()
+        if user.is_student:
+            student_profile = Student.objects.get(user=user)
+            year = self.request.data.get('year')
+            major = self.request.data.get('major')
+            student_profile.year = year
+            student_profile.major = major
+            student_profile.save()
+        
+        elif user.is_teacher:
+            teacher_profile = Teacher.objects.get(user=user)
+            degree = self.request.data.get('degree')
+            teacher_profile.degree = degree
+            teacher_profile.save()
     
 class LoginView(APIView):
     

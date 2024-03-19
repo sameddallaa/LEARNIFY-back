@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.validators import ValidationError
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, UserManager as BaseUserManager
 # Create your models here.
 
@@ -12,8 +13,8 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have a first name')
         if not last_name:
             raise ValueError('Users must have a last name')
-        if not (is_student or is_teacher or is_staff):
-            raise ValueError('You must select a role')
+        if not (is_student ^ is_teacher ^ is_staff):
+            raise ValueError('You must select one role')
         user = self.model(
             email=self.normalize_email(email),
             username=username,
@@ -72,5 +73,11 @@ class User(AbstractUser, PermissionsMixin):
     
     objects = UserManager()
     
+    def save(self, *args, **kwargs):
+        if not (self.is_student ^ self.is_staff ^ self.is_teacher):
+            raise ValidationError('You must choose a role')
+        if self.is_editor_teacher and not self.is_teacher:
+            self.is_teacher = True
+        super().save(*args, **kwargs)
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

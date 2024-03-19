@@ -8,7 +8,6 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     major = models.CharField(max_length=255, null=True)
     year = models.IntegerField(null=True)
-    
     def __str__(self):
         return str(self.user)
 

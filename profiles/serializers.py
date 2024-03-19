@@ -2,7 +2,6 @@ from rest_framework.validators import ValidationError
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from .users import User
-from django.contrib.auth.hashers import make_password
 
 class SignupSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
@@ -32,7 +31,7 @@ class SignupSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
     
     def create(self, validated_data):
-        password = make_password(validated_data['password'])
+        password = validated_data['password']
         user = super().create(validated_data)
         user.set_password(password)
         is_teacher, is_editor_teacher = validated_data['is_teacher'], validated_data['is_editor_teacher']
