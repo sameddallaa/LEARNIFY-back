@@ -30,24 +30,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_studentuser(self, email, username, first_name, last_name, password=None, is_student=True, is_staff=False, is_teacher=False, is_editor_teacher=False, is_superuser=False):
-        if not is_student:
-            raise ValueError('Staff users must have is_staff=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_editor_teacher, is_superuser)
-        return user
-    
-    def create_staffuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True, is_teacher=False, is_editor_teacher=False, is_superuser=False):
-        if not is_staff:
-            raise ValueError('Staff users must have is_staff=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_editor_teacher, is_superuser)
-        return user
-    
-    def create_teacheruser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=False, is_teacher=True, is_editor_teacher=False, is_superuser=False):
-        if not is_teacher:
-            raise ValueError('Teachers must have is_teacher=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_editor_teacher, is_superuser)
-        return user
-    
     def create_superuser(self, email, username, first_name, last_name ,password=None, is_student=False, is_staff=True, is_teacher=False, is_editor_teacher=False, is_superuser=True):
         if not (is_staff and is_superuser):
             raise ValueError('Superusers must have is_staff=True and is_superuser=True')
