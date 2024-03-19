@@ -22,14 +22,15 @@ class UserAdmin(BaseAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": ("email", "first_name", "last_name", "username", "password1", "password2", 'is_staff', 'is_student', 'is_teacher', 'is_editor_teacher', 'is_superuser'),
-            },
-        ),
-    )
+    (
+        None,
+        {
+            "classes": ("wide",),
+            "fields": ("email", "first_name", "last_name", "username", "password1", "password2", 'is_staff', 'is_student', 'is_teacher', 'is_editor_teacher', 'is_superuser'),
+        },
+    ),
+)
+
     
 admin.site.register(User, UserAdmin)
 admin.site.register(Teacher)

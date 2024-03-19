@@ -1,5 +1,6 @@
-from django.forms import ValidationError
+from rest_framework.validators import ValidationError
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 from .users import User
 from django.contrib.auth.hashers import make_password
 
@@ -23,7 +24,7 @@ class SignupSerializer(serializers.ModelSerializer):
             raise ValidationError('Email already exists')
         if User.objects.filter(username=attrs.get('username')).exists():
             raise ValidationError('Username already exists')
-        has_multiple_roles = not ((attrs.get('is_student') ^ attrs.get('is_teacher')) ^ attrs.get('is_staff'))
+        has_multiple_roles = not (attrs.get('is_student') ^ attrs.get('is_teacher') ^ attrs.get('is_staff'))
         if has_multiple_roles:
             raise ValidationError('You must select only one role')
         if attrs.get('is_editor_teacher') and not attrs.get('is_teacher'):
@@ -31,9 +32,13 @@ class SignupSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
     
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
+        password = make_password(validated_data['password'])
+        user = super().create(validated_data)
+        user.set_password(password)
         is_teacher, is_editor_teacher = validated_data['is_teacher'], validated_data['is_editor_teacher']
-        
         if is_editor_teacher and not is_teacher:
             validated_data['is_teacher'] = True
-        return super().create(validated_data)
+            
+        user.save()
+        Token.objects.create(user=user)
+        return user

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 # Create your models here.
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, first_name, last_name, password=None ,is_student=False, is_staff=False, is_teacher=False, is_editor_teacher=False, is_superuser=False):
+    def create_user(self, email, username, first_name, last_name, password=None ,is_student=False, is_staff=True, is_teacher=False, is_editor_teacher=False, is_superuser=False):
         if not email:
             raise ValueError('Users must have an email address')
         if not username:
@@ -12,6 +12,8 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have a first name')
         if not last_name:
             raise ValueError('Users must have a last name')
+        if not (is_student or is_teacher or is_staff):
+            raise ValueError('You must select a role')
         user = self.model(
             email=self.normalize_email(email),
             username=username,

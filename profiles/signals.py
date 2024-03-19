@@ -5,13 +5,14 @@ from .models import Student, Teacher
 #
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created and instance.is_student:
-        print("signal sent")
-        student = Student.objects.create(user=instance)
-        student.save()
-    elif created and instance.is_teacher:
-        teacher = Teacher.objects.create(user=instance)
-        teacher.save()
+    if created:
+        if instance.is_student:
+            print("signal sent")
+            student = Student.objects.create(user=instance)
+            student.save()
+        elif instance.is_teacher:
+            teacher = Teacher.objects.create(user=instance)
+            teacher.save()
         
 @receiver(post_delete, sender=Student)
 def delete_profile(sender, instance, **kwargs):
