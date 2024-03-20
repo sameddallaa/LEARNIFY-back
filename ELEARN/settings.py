@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-wh(p29)1y)#c6xvszvxx$dpb%akypwsr0_c%i#a2f+ya!g__pt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -101,15 +102,38 @@ WSGI_APPLICATION = 'ELEARN.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'elearn',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': '15012004a',
-        'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
+DATABASES['default'] = dj_database_url.parse("postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django")
+
+# postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'elearn',
+#         'USER': 'root',
+#         'PASSWORD': '15012004a',
+#         'HOST': 'localhost',
+#         'PORT': '3306'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
