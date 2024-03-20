@@ -1,6 +1,7 @@
 from django.db import models
 from rest_framework.validators import ValidationError
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, UserManager as BaseUserManager
+from django.core.validators import RegexValidator
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -39,11 +40,12 @@ class UserManager(BaseUserManager):
     
 
 class User(AbstractUser, PermissionsMixin):       
-    
+    valid_username = RegexValidator(r'^[\w.@+-]+$', 'Enter a valid username')
+    valid_name = RegexValidator(r'^[a-zA-Z]+$', 'Enter a valid name')
     email = models.EmailField(max_length=255, unique=True)
-    username = models.CharField(max_length=255, unique=True, null=False)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True, null=False, validators=[valid_username])
+    first_name = models.CharField(max_length=255, validators=[valid_name])
+    last_name = models.CharField(max_length=255, validators=[valid_name])
     is_staff = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_editor_teacher = models.BooleanField(default=False)
