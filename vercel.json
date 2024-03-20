@@ -2,7 +2,7 @@
   "builds": [
     {
       "src": "ELEARN/wsgi.py",
-      "use": "@vercel/python",
+      "use": "@vercel/python3.10",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }
   ],
