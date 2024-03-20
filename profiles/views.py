@@ -4,12 +4,12 @@ from rest_framework import generics, status, permissions, authentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from .users import User
+from .tokens import create_token_pair_for_user
 from .models import Student, Teacher
 from .serializers import SignupSerializer
 from rest_framework.views import APIView
 
 class SignupView(generics.GenericAPIView):
-    
     queryset = User.objects.all()
     serializer_class = SignupSerializer
     permission_classes = [permissions.IsAdminUser]
@@ -54,10 +54,11 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = authenticate(email=email, password=password)
         if user is not None:
+            tokens = create_token_pair_for_user(user)
             token, created = Token.objects.get_or_create(user=user)
             obj = {
                 'message': 'Login successful',
-                'token': token.key
+                'token': tokens
             }
             
             return Response(data=obj, status=status.HTTP_200_OK)
