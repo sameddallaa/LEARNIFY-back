@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Course, Subject
 from .serializers import CourseSerializer, SubjectSerializer
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 # Create your views here.
 
@@ -14,6 +14,8 @@ class SubjectsRetriveView(generics.RetrieveAPIView):
 class SubjectsListView(generics.ListAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+    # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication,]
+    permission_classes = [permissions.IsAdminUser]
 
 class SubjectsCreateView(generics.CreateAPIView):
     queryset = Subject.objects.all()
