@@ -114,7 +114,7 @@ DATABASES = {
 
 DATABASE_URL = 'postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django'
 
-DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
+DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
 
 # postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django
 
