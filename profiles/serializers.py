@@ -37,7 +37,6 @@ class SignupSerializer(serializers.ModelSerializer):
         is_teacher, is_editor_teacher = validated_data['is_teacher'], validated_data['is_editor_teacher']
         if is_editor_teacher and not is_teacher:
             validated_data['is_teacher'] = True
-            
         user.save()
         Token.objects.create(user=user)
         return user

@@ -50,6 +50,7 @@ class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True, null=False, validators=[valid_username])
     first_name = models.CharField(max_length=255, validators=[valid_name])
     last_name = models.CharField(max_length=255, validators=[valid_name])
+    # password = models.CharField(max_length=255)
     is_staff = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_editor_teacher = models.BooleanField(default=False)
@@ -66,6 +67,7 @@ class User(AbstractUser, PermissionsMixin):
             raise ValidationError('You must choose a role')
         if self.is_editor_teacher and not self.is_teacher:
             self.is_teacher = True
+        self.set_password(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
