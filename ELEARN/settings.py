@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'corsheaders'
 ]
 
 AUTH_USER_MODEL = 'profiles.User'
@@ -67,6 +68,12 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173"
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -75,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'ELEARN.urls'
