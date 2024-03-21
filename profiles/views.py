@@ -3,10 +3,11 @@ from django.shortcuts import render
 from rest_framework import generics, status, permissions, authentication
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 from .users import User
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher
-from .serializers import SignupSerializer
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer
 from rest_framework.views import APIView
 
 
@@ -67,3 +68,19 @@ class LoginView(APIView):
         return Response(data={
             'message': 'Email or password incorrect',
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserListView(ListAPIView):
+    
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+class StudentListView(ListAPIView):
+    
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    
+class TeacherListView(ListAPIView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
