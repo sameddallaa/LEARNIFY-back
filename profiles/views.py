@@ -10,7 +10,6 @@ from .models import Student, Teacher
 from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer
 from rest_framework.views import APIView
 
-
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
@@ -39,7 +38,6 @@ class SignupView(generics.GenericAPIView):
             degree = self.request.data.get('degree')
             teacher_profile.degree = degree
             teacher_profile.save()
-
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
