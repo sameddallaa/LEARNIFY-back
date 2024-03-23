@@ -11,7 +11,7 @@ urlpatterns = [
     path('teachers/', view=views.TeacherListView.as_view(), name='TeacherListView'),
     path('auth/signup/', view=views.SignupView.as_view(), name='SignupView'),
     path('csv-signup/', view=views.FileUploadAPIView.as_view(), name='csv_bulk_signup'),
-    path('auth/login/', view=views.LoginView.as_view(), name='LoginView'),
+    # path('auth/login/', view=views.LoginView.as_view(), name='LoginView'),
     path('jwt/create/', view=TokenObtainPairView.as_view(), name='JWTCreateView'),
     path('jwt/refresh/', view=TokenRefreshView.as_view(), name='JWTRefreshView'),
     path('jwt/verify/', view=TokenVerifyView.as_view(), name='JWTVerifyView'),

@@ -25,7 +25,7 @@ class IsEditorTeacherPermission(permissions.DjangoModelPermissions):
     }
     def has_permission(self, request, view):
         user = request.user
-        if user.is_editor_teacher:
+        if user.is_authenticated and user.is_editor_teacher:
             return True
         return False
     
@@ -38,11 +38,11 @@ class isTeacherPermission(permissions.DjangoModelPermissions):
         if request.method == 'GET':
             return request.user.is_authenticated and request.user.is_teacher
         return False
-    def has_permission(self, request, view):
-        user = request.user
-        if user.is_teacher:
-            return True
-        return False
+    # def has_permission(self, request, view):
+    #     user = request.user
+    #     if user.is_teacher:
+    #         return True
+    #     return False
     
 class IsStaffPermission(permissions.DjangoModelPermissions):
     pass
