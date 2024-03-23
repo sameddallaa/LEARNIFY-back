@@ -1,8 +1,7 @@
 from rest_framework.validators import ValidationError
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from .users import User
-from .models import Student, Teacher
+from .models import Student, Teacher, UploadedFile, User
 
 class SignupSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
@@ -42,6 +41,11 @@ class SignupSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
     
+    
+class UploadedFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UploadedFile
+        fields = '__all__'
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

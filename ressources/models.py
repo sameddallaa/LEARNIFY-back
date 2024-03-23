@@ -15,7 +15,7 @@ class Subject(models.Model):
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    content = models.FileField()
+    content = models.TextField()
     subject = models.ForeignKey(Subject, null=True, on_delete=models.SET_NULL)
     
     def __str__(self):

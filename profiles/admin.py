@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseAdmin
-from .users import User
-from .models import Teacher, Student
+from .models import Teacher, Student, User
 # Register your models here.
 
 class UserAdmin(BaseAdmin):
