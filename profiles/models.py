@@ -84,7 +84,6 @@ class User(AbstractUser, PermissionsMixin):
             raise ValidationError('You must choose a role')
         if self.is_editor_teacher and not self.is_teacher:
             self.is_teacher = True
-        self.set_password(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
