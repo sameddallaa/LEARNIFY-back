@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, status, permissions
@@ -7,7 +7,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher, User
-from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer
+from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 import csv
 
@@ -97,8 +98,8 @@ class LoginView(APIView):
         return Response(data=obj, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        email = request.data['email']
+        password = request.data['password']
         user = authenticate(email=email, password=password)
         if user is not None:
             tokens = create_token_pair_for_user(user)
@@ -112,7 +113,33 @@ class LoginView(APIView):
             'message': 'Email or password incorrect',
         }, status=status.HTTP_400_BAD_REQUEST)
 
+class ChangePasswordView(generics.UpdateAPIView):
+    
+    permission_classes = [IsAccountOwnerPermission]
+    serializer_class = ChangePasswordSerializer
+    def get_object(self):
+        obj = self.request.user
+        return obj
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
 
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+            update_session_auth_hash(request, request.user)
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class UserListView(ListAPIView):
     
     queryset = User.objects.all()
