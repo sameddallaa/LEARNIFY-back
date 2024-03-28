@@ -39,7 +39,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_student(self, email, username, first_name, last_name, major, year, password=None, is_student=True, is_staff=False,
+    def create_student(self, email, username, first_name, last_name, group, year, password=None, is_student=True, is_staff=False,
                          is_teacher=False, is_editor_teacher=False, is_superuser=False):
         if not is_student:
             raise ValueError('You must be a student')
@@ -47,8 +47,10 @@ class UserManager(BaseUserManager):
             raise ValidationError("Wrong flags for student user")
         user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_editor_teacher, is_superuser)
         student = Student.objects.get(user = user)
-        student.major = major
-        student.year = year
+        y, created = Year.objects.get_or_create(year=year)
+        g, created = Group.objects.get_or_create(number=group, year=y)
+        student.group = g
+        student.year = y
         
         student.save()
         return user
@@ -90,12 +92,32 @@ class User(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    
+class Year(models.Model):
+    year = models.IntegerField(unique=True)
+    
+    
+    class Meta:
+        ordering = ['year',]
+    def __str__(self):
+        return str(self.year)
+    
+    
+class Group(models.Model):
+    year = models.ForeignKey(Year, related_name='groups', on_delete=models.SET_NULL, null=True)
+    number = models.IntegerField()
 
+    class Meta:
+        ordering = ['year', 'number']
+    def __str__(self):
+        return f"Year: {self.year} | Group: {str(self.number)}"
 
 class Student(models.Model):    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    major = models.CharField(max_length=255, null=True)
-    year = models.IntegerField(null=True)
+    # major = models.CharField(max_length=255, null=True)
+    year = models.ForeignKey(Year, null=True, on_delete=models.SET_NULL)
+    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         return str(self.user)
 

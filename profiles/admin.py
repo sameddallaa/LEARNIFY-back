@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseAdmin
-from .models import Teacher, Student, User
+from .models import Teacher, Student, User, Group, Year
 # Register your models here.
 
 class UserAdmin(BaseAdmin):
@@ -34,3 +34,5 @@ class UserAdmin(BaseAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(Teacher)
 admin.site.register(Student)
+admin.site.register(Year)
+admin.site.register(Group)

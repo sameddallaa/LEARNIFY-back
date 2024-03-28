@@ -32,9 +32,9 @@ class SignupView(generics.GenericAPIView):
         if user.is_student:
             student_profile = Student.objects.get(user=user)
             year = self.request.data.get('year')
-            major = self.request.data.get('major')
+            group = self.request.data.get('group')
             student_profile.year = year
-            student_profile.major = major
+            student_profile.group = group
             student_profile.save()
 
         elif user.is_teacher:
@@ -65,7 +65,7 @@ class FileUploadAPIView(APIView):
                     'username': student[1] + student[2],
                     'first_name': student[1],
                     'last_name': student[2],
-                    'major': student[3],
+                    'group': student[3],
                     'year': student[4],
                     'password': generate_password(12),
                     'is_student': True,
@@ -80,7 +80,7 @@ class FileUploadAPIView(APIView):
                     user['username'],
                     user['first_name'],
                     user['last_name'],
-                    user['major'],
+                    user['group'],
                     user['year'],
                     user['password'], 
                 )
