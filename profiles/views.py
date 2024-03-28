@@ -10,7 +10,9 @@ from .models import Student, Teacher, User
 from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer
 from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 import csv
+from .utils import generate_password
 
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
@@ -65,7 +67,7 @@ class FileUploadAPIView(APIView):
                     'last_name': student[2],
                     'major': student[3],
                     'year': student[4],
-                    'password':'student password',
+                    'password': generate_password(12),
                     'is_student': True,
                     'is_staff': False,
                     'is_teacher': False,
@@ -73,7 +75,7 @@ class FileUploadAPIView(APIView):
                 })
             
             for user in users:
-                User.objects.create_student(
+                created_user = User.objects.create_student(
                     user['email'], 
                     user['username'],
                     user['first_name'],
@@ -82,7 +84,7 @@ class FileUploadAPIView(APIView):
                     user['year'],
                     user['password'], 
                 )
-                
+                Token.objects.create(user=created_user)
             return Response({'success': "Students added successfully."}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     

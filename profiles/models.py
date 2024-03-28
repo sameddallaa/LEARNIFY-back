@@ -1,13 +1,11 @@
-from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db import models
 from rest_framework.validators import ValidationError
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, UserManager as BaseUserManager
 from django.core.validators import RegexValidator
+from .utils import send_password_after_signup, generate_password
 # Create your models here.
 
-
-# Create your models here.
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
@@ -33,7 +31,11 @@ class UserManager(BaseUserManager):
             is_teacher=is_teacher,
             is_editor_teacher=is_editor_teacher,
         )
+        if password is None:
+            password = generate_password(12)
+            
         user.set_password(password)
+        send_password_after_signup(password, user)
         user.save(using=self._db)
         return user
 
