@@ -94,8 +94,18 @@ class User(AbstractUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
     
     
+    
+def is_valid_year(year):
+    if year < 1 or year > 5:
+        raise ValidationError("Year must be 1, 2, 3, 4, or 5.")
+    
+def is_valid_group(group):
+    if group < 1 or group > 10:
+        raise ValidationError("Group must be 1, 2, 3, 4, 5, 6, 7, 8, 9, or 10.")
+
+
 class Year(models.Model):
-    year = models.IntegerField(unique=True)
+    year = models.IntegerField(unique=True, validators=[is_valid_year])
     
     
     class Meta:
@@ -105,7 +115,7 @@ class Year(models.Model):
     
     
 class Group(models.Model):
-    year = models.ForeignKey(Year, related_name='groups', on_delete=models.SET_NULL, null=True)
+    year = models.ForeignKey(Year, related_name='groups', on_delete=models.SET_NULL, null=True, validators=[is_valid_group])
     number = models.IntegerField()
 
     class Meta:
