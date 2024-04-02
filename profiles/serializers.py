@@ -1,6 +1,7 @@
 from rest_framework.validators import ValidationError
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Student, Teacher, UploadedFile, User
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -41,6 +42,32 @@ class SignupSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
     
+    
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['username'] = user.username
+        token['email'] = user.email
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+        
+        if user.is_student:
+            try:
+                student = Student.objects.get(user=user)
+                token['year'] = str(student.year)
+                token['group'] = str(student.group)
+            except Student.DoesNotExist:
+                raise ValidationError('Student model instance does not exist')
+        elif user.is_teacher:
+            try:
+                teacher = Teacher.objects.get(user=user)
+                token['degree'] = teacher.degree
+                token['is_editor'] = 'Yes' if user.is_editor_teacher else 'No'
+            except Teacher.DoesNotExist:
+                raise ValidationError('Teacher model instance does not exist')
+        return token
     
 class UploadedFileSerializer(serializers.ModelSerializer):
     class Meta:

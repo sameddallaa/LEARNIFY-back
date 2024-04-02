@@ -1,19 +1,19 @@
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import JsonResponse
 from django.shortcuts import render
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status, permissions, authentication
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher, User
-from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer
 from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 import csv
 from .utils import generate_password
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
@@ -90,14 +90,14 @@ class FileUploadAPIView(APIView):
     
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    # authentication_classes = [JWTAuthentication]
+    # def get(self, request, *args, **kwargs):
+    #     obj = {
+    #         'user': str(request.user),
+    #         'auth': str(request.auth)
+    #     }
 
-    def get(self, request, *args, **kwargs):
-        obj = {
-            'user': str(request.user),
-            'auth': str(request.auth)
-        }
-
-        return Response(data=obj, status=status.HTTP_200_OK)
+    #     return Response(data=obj, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         email = request.data['email']
@@ -107,13 +107,17 @@ class LoginView(APIView):
             tokens = create_token_pair_for_user(user)
             obj = {
                 'message': 'Login successful',
-                'token': tokens
+                'tokens': tokens
             }
 
             return Response(data=obj, status=status.HTTP_200_OK)
         return Response(data={
             'message': 'Email or password incorrect',
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 class ChangePasswordView(generics.UpdateAPIView):
     

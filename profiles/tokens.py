@@ -1,5 +1,5 @@
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User
+from .models import User, Student, Teacher
 
 
 def create_token_pair_for_user(user: User):

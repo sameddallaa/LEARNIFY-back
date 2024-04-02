@@ -67,11 +67,12 @@ class UserManager(BaseUserManager):
 class User(AbstractUser, PermissionsMixin):
     valid_username = RegexValidator(r'^[\w.@+-]+$', 'Enter a valid username')
     valid_name = RegexValidator(r'^[a-zA-Z]+$', 'Enter a valid name')
+    
+    
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True, null=False, validators=[valid_username])
     first_name = models.CharField(max_length=255, validators=[valid_name])
     last_name = models.CharField(max_length=255, validators=[valid_name])
-    # password = models.CharField(max_length=255)
     is_staff = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_editor_teacher = models.BooleanField(default=False)
@@ -88,6 +89,7 @@ class User(AbstractUser, PermissionsMixin):
             raise ValidationError('You must choose a role')
         if self.is_editor_teacher and not self.is_teacher:
             self.is_teacher = True
+        self.username = self.username.lower()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -111,7 +113,7 @@ class Year(models.Model):
     class Meta:
         ordering = ['year',]
     def __str__(self):
-        return str(self.year)
+        return f"Year {str(self.year)}"
     
     
 class Group(models.Model):
@@ -121,13 +123,19 @@ class Group(models.Model):
     class Meta:
         ordering = ['year', 'number']
     def __str__(self):
-        return f"Year: {self.year} | Group: {str(self.number)}"
+        return f"{str(self.year)} - Group {str(self.number)}"
 
 class Student(models.Model):    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # major = models.CharField(max_length=255, null=True)
     year = models.ForeignKey(Year, null=True, on_delete=models.SET_NULL)
     group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
+    
+    
+    def save(self, *args, **kwargs):
+        if self.group.year != self.year:
+            raise ValidationError("Group and year do not match.")
+        
+        super().save(*args, **kwargs)
     def __str__(self):
         return str(self.user)
 
