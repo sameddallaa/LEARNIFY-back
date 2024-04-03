@@ -4,6 +4,7 @@ from rest_framework.validators import ValidationError
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, UserManager as BaseUserManager
 from django.core.validators import RegexValidator
 from .utils import send_password_after_signup, generate_password
+import uuid
 # Create your models here.
 
 
@@ -89,7 +90,7 @@ class User(AbstractUser, PermissionsMixin):
             raise ValidationError('You must choose a role')
         if self.is_editor_teacher and not self.is_teacher:
             self.is_teacher = True
-        self.username = self.username.lower()
+        
         super().save(*args, **kwargs)
 
     def __str__(self):

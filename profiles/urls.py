@@ -13,7 +13,9 @@ urlpatterns = [
     path('auth/signup/', view=views.SignupView.as_view(), name='SignupView'),
     path('csv-signup/', view=views.FileUploadAPIView.as_view(), name='csv_bulk_signup'),
     path('auth/login/', view=views.MyTokenObtainPairView.as_view(), name='LoginView'),
-    path('jwt/create/', view=TokenObtainPairView.as_view(), name='JWTCreateView'),
-    path('jwt/refresh/', view=TokenRefreshView.as_view(), name='JWTRefreshView'),
+    # path('jwt/create/', view=TokenObtainPairView.as_view(), name='JWTCreateView'),
+    path('auth/login/refresh/', view=TokenRefreshView.as_view(), name='JWTRefreshView'),
     path('jwt/verify/', view=TokenVerifyView.as_view(), name='JWTVerifyView'),
+    path('years/', view=views.YearListView.as_view(), name='YearListView'),
+    path('groups/', view=views.GroupListView.as_view(), name='GroupListView'),
 ]

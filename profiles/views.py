@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
-from .models import Student, Teacher, User
-from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer
+from .models import Student, Teacher, User, Year, Group
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer
 from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -160,3 +160,13 @@ class StudentListView(ListAPIView):
 class TeacherListView(ListAPIView):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
+    
+class YearListView(ListAPIView):
+    queryset = Year.objects.all()
+    serializer_class = YearSerializer
+    permission_classes = [permissions.AllowAny]
+    
+class GroupListView(ListAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.AllowAny]

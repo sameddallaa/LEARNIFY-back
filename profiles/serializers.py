@@ -2,7 +2,7 @@ from rest_framework.validators import ValidationError
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Student, Teacher, UploadedFile, User
+from .models import Student, Teacher, UploadedFile, User, Year, Group
 
 class SignupSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
@@ -98,3 +98,15 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = '__all__'
+        
+class YearSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Year
+        fields = '__all__'
+        
+class GroupSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Group
+        fields = ['number', 'year']
