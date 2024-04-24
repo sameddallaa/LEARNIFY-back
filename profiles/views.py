@@ -55,7 +55,7 @@ class FileUploadAPIView(APIView):
             users = []
             file = serializer.validated_data['file']
             file_content = file.read().decode('utf-8').splitlines()
-            print(file_content)
+            # print(file_content)
             students = csv.reader(file_content)
             next(students)
             user = []

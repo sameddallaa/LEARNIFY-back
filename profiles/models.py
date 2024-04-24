@@ -55,7 +55,7 @@ class UserManager(BaseUserManager):
         
         student.save()
         return user
-        
+    
     def create_superuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
                          is_teacher=False, is_editor_teacher=False, is_superuser=True):
         if not (is_staff and is_superuser):
@@ -108,7 +108,7 @@ def is_valid_group(group):
 
 
 class Year(models.Model):
-    year = models.IntegerField(unique=True, validators=[is_valid_year])
+    year = models.IntegerField(unique=True, validators=[is_valid_year], null=True)
     
     
     class Meta:
@@ -119,7 +119,7 @@ class Year(models.Model):
     
 class Group(models.Model):
     year = models.ForeignKey(Year, related_name='groups', on_delete=models.SET_NULL, null=True, validators=[is_valid_group])
-    number = models.IntegerField()
+    number = models.IntegerField(null=True)
 
     class Meta:
         ordering = ['year', 'number']
@@ -133,8 +133,33 @@ class Student(models.Model):
     
     
     def save(self, *args, **kwargs):
+        if not self.year_id:
+            year, created = Year.objects.get_or_create(year=self.year)
+            self.year = year
+        if not self.group_id:
+            group, created = Group.objects.get_or_create(number=self.group, year=self.year)
+            self.group = group
+            
         if self.group.year != self.year:
             raise ValidationError("Group and year do not match.")
+        
+        # if not Year.objects.filter(year=self.year).exists():
+        #     try:
+        #         is_valid_year(kwargs.get('year'))
+        #         new_year = Year.objects.create(year=self.year)
+        #         new_year.save()
+        #     except ValidationError:
+        #         raise ValidationError(f'{self.year} is not a valid year')
+            
+        # if not Group.objects.filter(number=self.group, year=self.year).exists():
+        #     try:
+        #         is_valid_group(kwargs.get('group'))
+        #         new_group = Group.objects.create(number=self.group, year=self.year)
+        #         new_group.save()
+        #     except ValidationError:
+        #         raise ValidationError(f'{self.group} is not a valid group')
+        # if self.group.year != self.year:
+        #     raise ValidationError("Group and year do not match.")
         
         super().save(*args, **kwargs)
     def __str__(self):
