@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.db import transaction, IntegrityError
 from rest_framework import generics, status, permissions, authentication
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
@@ -14,6 +15,7 @@ from rest_framework.authtoken.models import Token
 import csv
 from .utils import generate_password
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
@@ -55,55 +57,69 @@ class FileUploadAPIView(APIView):
             users = []
             file = serializer.validated_data['file']
             file_content = file.read().decode('utf-8').splitlines()
-            # print(file_content)
             students = csv.reader(file_content)
             next(students)
-            user = []
+            unsuccessful_attempts = []
             for student in students:
-                users.append({
-                    'email': student[0],
-                    'username': student[1] + student[2],
-                    'first_name': student[1],
-                    'last_name': student[2],
-                    'group': student[3],
-                    'year': student[4],
-                    'password': generate_password(12),
-                    'is_student': True,
-                    'is_staff': False,
-                    'is_teacher': False,
-                    'is_editor_teacher': False,
-                })
-            
-            unsuccessfull_attemps = []
-            for user in users:
-                try:
-                    created_user = User.objects.create_student(
-                        user['email'], 
-                        user['username'],
-                        user['first_name'],
-                        user['last_name'],
-                        user['group'],
-                        user['year'],
-                        user['password'], 
-                    )
-                except Exception as e:
-                    unsuccessfull_attemps.append({user['username']: str(e)})
-                    continue
+                if not (User.objects.filter(email=student[0]).exists() or User.objects.filter(username=student[1] + student[2])):
+                    users.append({
+                        'email': student[0],
+                        'username': student[1] + student[2],
+                        'first_name': student[1],
+                        'last_name': student[2],
+                        'group': student[3],
+                        'year': student[4],
+                        'password': generate_password(12),
+                        'is_student': True,
+                        'is_staff': False,
+                        'is_teacher': False,
+                        'is_editor_teacher': False,
+                    })
+                else:
+                    unsuccessful_attempts.append({
+                        'email': student[0],
+                        'username': student[1] + student[2],
+                        'first_name': student[1],
+                        'last_name': student[2],
+                        'group': student[3],
+                        'year': student[4],
+                        'password': generate_password(12),
+                        'is_student': True,
+                        'is_staff': False,
+                        'is_teacher': False,
+                        'is_editor_teacher': False,
+                    })
+            with transaction.atomic():
                 
-            if unsuccessfull_attemps:
-                return Response({'meh': "Some student were not added successfully.", 'unsuccessfull_attemps': unsuccessfull_attemps}, status=status.HTTP_200_OK)
+                created_users = User.objects.bulk_create([
+                    User(
+                        email=user['email'],
+                        username=user['username'],
+                        first_name=user['first_name'],
+                        last_name=user['last_name'],
+                        password=user['password'],
+                        is_student=True
+                    )
+                    for user in users
+                ], batch_size=1000, ignore_conflicts=True)
+                for created_user in created_users:
+                    created_user.set_password(created_user.password)
+                    created_user.save()
+            if unsuccessful_attempts:
+                return Response({'message': "Some student were not added successfully.", 'unsuccessful_attempts': unsuccessful_attempts}, status=status.HTTP_207_MULTI_STATUS)
+            return Response({'success': 'Students were added successfully'}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
-    # authentication_classes = [JWTAuthentication]
-    # def get(self, request, *args, **kwargs):
-    #     obj = {
-    #         'user': str(request.user),
-    #         'auth': str(request.auth)
-    #     }
+    authentication_classes = [JWTAuthentication]
+    def get(self, request, *args, **kwargs):
+        obj = {
+            'user': str(request.user),
+            'auth': str(request.auth)
+        }
 
-    #     return Response(data=obj, status=status.HTTP_200_OK)
+        return Response(data=obj, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         email = request.data['email']

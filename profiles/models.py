@@ -1,3 +1,4 @@
+from typing import Any, Iterable, Sequence
 from django.dispatch import receiver
 from django.db import models
 from rest_framework.validators import ValidationError
@@ -56,6 +57,10 @@ class UserManager(BaseUserManager):
         student.save()
         return user
     
+    def bulk_create(self, objs: Iterable, *args, **kwargs):
+        for obj in objs:
+            obj.save()
+        return super().bulk_create(objs, *args, **kwargs)
     def create_superuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
                          is_teacher=False, is_editor_teacher=False, is_superuser=True):
         if not (is_staff and is_superuser):
@@ -66,6 +71,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser, PermissionsMixin):
+    
+    
     valid_username = RegexValidator(r'^[\w.@+-]+$', 'Enter a valid username')
     valid_name = RegexValidator(r'^[a-zA-Z]+$', 'Enter a valid name')
     
