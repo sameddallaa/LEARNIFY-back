@@ -74,18 +74,24 @@ class FileUploadAPIView(APIView):
                     'is_editor_teacher': False,
                 })
             
+            unsuccessfull_attemps = []
             for user in users:
-                created_user = User.objects.create_student(
-                    user['email'], 
-                    user['username'],
-                    user['first_name'],
-                    user['last_name'],
-                    user['group'],
-                    user['year'],
-                    user['password'], 
-                )
-                Token.objects.create(user=created_user)
-            return Response({'success': "Students added successfully."}, status=status.HTTP_200_OK)
+                try:
+                    created_user = User.objects.create_student(
+                        user['email'], 
+                        user['username'],
+                        user['first_name'],
+                        user['last_name'],
+                        user['group'],
+                        user['year'],
+                        user['password'], 
+                    )
+                except Exception as e:
+                    unsuccessfull_attemps.append({user['username']: str(e)})
+                    continue
+                
+            if unsuccessfull_attemps:
+                return Response({'meh': "Some student were not added successfully.", 'unsuccessfull_attemps': unsuccessfull_attemps}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
