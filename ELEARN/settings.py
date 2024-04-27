@@ -96,7 +96,8 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:3000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
@@ -151,7 +152,7 @@ DATABASES = {
 
 DATABASE_URL = 'postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django'
 
-# DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
+DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
 
 # postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django
 
