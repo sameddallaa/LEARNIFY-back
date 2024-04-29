@@ -13,7 +13,8 @@ from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 import csv
-from .utils import generate_password
+from .utils import generate_password, send_password_after_signup, find_among_users
+from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 class SignupView(generics.GenericAPIView):
@@ -83,7 +84,6 @@ class FileUploadAPIView(APIView):
                         'last_name': student[2],
                         'group': student[3],
                         'year': student[4],
-                        'password': generate_password(12),
                         'is_student': True,
                         'is_staff': False,
                         'is_teacher': False,
@@ -97,13 +97,16 @@ class FileUploadAPIView(APIView):
                         username=user['username'],
                         first_name=user['first_name'],
                         last_name=user['last_name'],
-                        password=user['password'],
+                        password=make_password(user['password']),
                         is_student=True
                     )
                     for user in users
                 ], batch_size=1000, ignore_conflicts=True)
                 for created_user in created_users:
-                    created_user.set_password(created_user.password)
+                    user = find_among_users(users, 'email', created_user.email)
+                    password = user['password']
+                    user = User.objects.get(email=user['email'])
+                    send_password_after_signup(password, user)
                     created_user.save()
             if unsuccessful_attempts:
                 return Response({'message': "Some student were not added successfully.", 'unsuccessful_attempts': unsuccessful_attempts}, status=status.HTTP_207_MULTI_STATUS)

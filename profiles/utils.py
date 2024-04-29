@@ -1,18 +1,23 @@
 from django.conf import settings
 import random
 import string
-
 from django.core.mail import send_mail
 
 def send_password_after_signup(password: str, recipient):
     
     subject = 'Mot de passe Learnify'
-    message = f"Bonjour, {recipient.first_name}.\n\n Soyez les bienvenus à notre service.\n\nVotre mot de passe Learnify est le suivant:\n\n {password}\n\nIl est recommendé que vous le changiez pour des raisons de sécurité. \n\nEquipe Learnify."
+    message = f"Bonjour, {recipient.first_name}.\n\n Soyez les bienvenus à notre service.\n\nVotre mot de passe Learnify est le suivant:\n\n{password}\n\nIl est recommendé que vous le changiez pour des raisons de sécurité. \n\nEquipe Learnify."
     from_email = settings.EMAIL_HOST_USER
     recipient_list = [recipient.email, ]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
     
     
+
+def find_among_users(users, key, value):
+    for user in users:
+        if user[key] == value:
+            return user
+    return None
 
 def generate_password(length=12):
     lower_case = string.ascii_lowercase
