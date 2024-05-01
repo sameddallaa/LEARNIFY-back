@@ -11,22 +11,9 @@ def create_profile(sender, instance, created, **kwargs):
             student.year, _ = Year.objects.get_or_create(year=0)
             print('it works so far')
             student.group, _ = Group.objects.get_or_create(number=0, year=student.year)
-            # year = kwargs.get('year')
-            # group = kwargs.get('group')
-            # if year:
-            #     y, _ = Year.objects.get_or_create(year=year)
-            #     student.year = y
-            # if group:
-            #     g, _ = Group.objects.get_or_create(number=group, year=y)
-            #     student.group = g
             student.save()
         elif instance.is_teacher:
             teacher = Teacher.objects.create(user=instance)
-            teacher.save()
-
-# @receiver(post_save, sender=Student)
-# def add_group_and_year(sender, instance, created, **kwargs):
-#     if created:
         
 
 @receiver(post_delete, sender=Student)

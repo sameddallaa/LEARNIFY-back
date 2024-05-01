@@ -11,7 +11,7 @@ import uuid
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
-                    is_teacher=False, is_editor_teacher=False, is_superuser=False):
+                    is_teacher=False, is_superuser=False):
         if not email:
             raise ValueError('Users must have an email address')
         if not username:
@@ -31,7 +31,7 @@ class UserManager(BaseUserManager):
             is_staff=is_staff,
             is_superuser=is_superuser,
             is_teacher=is_teacher,
-            is_editor_teacher=is_editor_teacher,
+            # is_editor_teacher=is_editor_teacher,
         )
         if password is None:
             password = generate_password(12)
@@ -42,40 +42,23 @@ class UserManager(BaseUserManager):
         return user
 
     def create_student(self, email, username, first_name, last_name, group, year, password=None, is_student=True, is_staff=False,
-                         is_teacher=False, is_editor_teacher=False, is_superuser=False):
+                         is_teacher=False, is_superuser=False):
         if not is_student:
             raise ValueError('You must be a student')
-        if is_staff or is_teacher or is_editor_teacher or is_superuser:
+        if is_staff or is_teacher or is_superuser:
             raise ValidationError("Wrong flags for student user")
-        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_editor_teacher, is_superuser)
-        # student = Student.objects.get(user = user)
-        # y, _ = Year.objects.get_or_create(year=year)
-        # g, _ = Group.objects.get_or_create(number=group, year=y)
-        # student.group = g
-        # student.year = y
-        
-        # student.save()
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
         return user
     
     def bulk_create(self, objs: Iterable, *args, **kwargs):
         for obj in objs:
             obj.save()
-            # if obj.is_student:
-            #     student = Student.objects.get(user=obj.id)
-            #     if not Year.objects.filter(year=student.year).exists():
-            #         y = Year.objects.create(year=student.year)
-            #         y.save()
-                    
-            #     if not Group.objects.filter(year=student.year).exists():
-            #         g = Group.objects.create(number=student.group, year=obj.year)
-            #         g.save()
         return super().bulk_create(objs, *args, **kwargs)
     def create_superuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
-                         is_teacher=False, is_editor_teacher=False, is_superuser=True):
+                         is_teacher=False, is_superuser=True):
         if not (is_staff and is_superuser):
             raise ValueError('Superusers must have is_staff=True and is_superuser=True')
-        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher,
-                                is_editor_teacher, is_superuser)
+        user = self.create_user(email, username, first_name, last_name, password, is_student, is_staff, is_teacher, is_superuser)
         return user
 
 
@@ -92,7 +75,6 @@ class User(AbstractUser, PermissionsMixin):
     last_name = models.CharField(max_length=255, validators=[valid_name])
     is_staff = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
-    is_editor_teacher = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -104,8 +86,6 @@ class User(AbstractUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         if not (self.is_student ^ self.is_staff ^ self.is_teacher):
             raise ValidationError('You must choose a role')
-        if self.is_editor_teacher and not self.is_teacher:
-            self.is_teacher = True
         
         super().save(*args, **kwargs)
 
@@ -167,9 +147,23 @@ class Student(models.Model):
 
 
 class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    degree = models.CharField(max_length=255, null=True) # add choices for degree
     
+    
+    CHOICES = (
+        ('PROFESSEUR', 'Professeur'),
+        ('MAITRE ASSISTANT A', 'Maître assistant A'),
+        ('MAITRE ASSISTANT B', 'Maître assistant B'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    degree = models.CharField(max_length=255, null=True) 
+    
+    
+    def save(self, *args, **kwargs):
+        degree = kwargs.pop('degree', "")
+        # self.degree = degree
+            
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return str(self.user)
 

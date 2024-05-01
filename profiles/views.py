@@ -48,7 +48,7 @@ class SignupView(generics.GenericAPIView):
             
             
             
-class FileUploadAPIView(APIView):
+class FileUploadStudentsAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = UploadedFileSerializer
     permission_classes = [permissions.IsAdminUser]
@@ -105,15 +105,88 @@ class FileUploadAPIView(APIView):
                 for created_user, user in zip(created_users, users):
                     student = Student.objects.get(user=created_user)
                     student.save(year=user['year'], group=user['group'])
-                    user = find_among_users(users, 'email', created_user.email)
-                    password = user['password']
-                    user = User.objects.get(email=user['email'])
+                    
+                    # user = find_among_users(users, 'email', created_user.email)
+                    # password = user['password']
+                    # user = User.objects.get(email=user['email'])
+                    
                     # send_password_after_signup(password, user)
             if unsuccessful_attempts:
                 return Response({'message': "Some student were not added successfully.", 'unsuccessful_attempts': unsuccessful_attempts}, status=status.HTTP_207_MULTI_STATUS)
             return Response({'success': 'Students were added successfully'}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     
+    
+class FileUploadTeacherAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    serializer_class = UploadedFileSerializer
+    permission_classes = [permissions.IsAdminUser]
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            users = []
+            file = serializer.validated_data['file']
+            file_content = file.read().decode('utf-8').splitlines()
+            teachers = csv.reader(file_content)
+            next(teachers)
+            unsuccessful_attempts = []
+            for teacher in teachers:
+                if not (User.objects.filter(email=teacher[0]).exists() or User.objects.filter(username=teacher[1] + teacher[2])):
+                    users.append({
+                        'email': teacher[0],
+                        'username': teacher[1] + teacher[2],
+                        'first_name': teacher[1],
+                        'last_name': teacher[2],
+                        'degree': teacher[3],
+                        # 'is_editor_teacher': teacher[4],
+                        'password': generate_password(12),
+                        'is_student': False,
+                        'is_staff': False,
+                        'is_teacher': True,
+                        # 'is_editor_teacher': teacher[4] == "éditeur",
+                    })
+                else:
+                    unsuccessful_attempts.append({
+                        'email': teacher[0],
+                        'username': teacher[1] + teacher[2],
+                        'first_name': teacher[1],
+                        'last_name': teacher[2],
+                        'degree': teacher[3],
+                        # 'year': teacher[4],
+                        'is_student': False,
+                        'is_staff': False,
+                        'is_teacher': True,
+                        # 'is_editor_teacher': False,
+                    })
+            with transaction.atomic():
+                
+                created_users = User.objects.bulk_create([
+                    User(
+                        email=user['email'],
+                        username=user['username'],
+                        first_name=user['first_name'],
+                        last_name=user['last_name'],
+                        password=make_password(user['password']),
+                        is_teacher=True
+                    )
+                    for user in users
+                ], batch_size=1000, ignore_conflicts=True)
+                
+                
+                for created_user, user in zip(created_users, users):
+                    teacher = Teacher.objects.get(user=created_user)
+                    teacher.degree = user['degree']
+                    teacher.save()
+                    
+                    # user = find_among_users(users, 'email', created_user.email)
+                    # password = user['password']
+                    # user = User.objects.get(email=user['email'])
+                    
+                    # send_password_after_signup(password, user)
+            if unsuccessful_attempts:
+                return Response({'message': "Some teacher were not added successfully.", 'unsuccessful_attempts': unsuccessful_attempts}, status=status.HTTP_207_MULTI_STATUS)
+            return Response({'success': 'Teachers were added successfully'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = [JWTAuthentication]

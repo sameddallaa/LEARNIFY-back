@@ -14,6 +14,7 @@ class Subject(models.Model):
     teachers = models.ManyToManyField(Teacher, related_name='subjects')
     year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
     coefficient = models.IntegerField(validators=[valid_coeff])
+    credit = models.IntegerField()
     
     def __str__(self):
         return self.name
