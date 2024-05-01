@@ -120,7 +120,7 @@ class Year(models.Model):
     
     
 class Group(models.Model):
-    year = models.ForeignKey(Year, related_name='groups', null=True, default=0, on_delete=models.SET_NULL)
+    year = models.ForeignKey(Year, related_name='groups', null=True, on_delete=models.SET_NULL)
     number = models.IntegerField(validators=[is_valid_group], default=0)
 
     class Meta:
