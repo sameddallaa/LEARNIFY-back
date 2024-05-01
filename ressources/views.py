@@ -1,8 +1,11 @@
 from django.shortcuts import render
-from .models import Course, Subject
+from .models import Course, Subject, Year
 from .serializers import CourseSerializer, SubjectSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
 
 
@@ -12,6 +15,7 @@ class SubjectsRetriveView(generics.RetrieveAPIView):
     lookup_field = 'id'    
     
 class SubjectsListView(generics.ListAPIView):
+    # lookup_field = 'year'
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication,]
@@ -25,6 +29,13 @@ class SubjectsUpdateView(generics.UpdateAPIView, generics.RetrieveAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     lookup_field = 'id'
+    
+class SubjectYearView(APIView):
+    def get(self, request, *args, **kwargs):
+        year = kwargs.get('year')
+        queryset = Subject.objects.filter(year=Year.objects.get(year=year))
+        serializer = SubjectSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
 #     queryset = Subject.objects.all()

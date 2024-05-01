@@ -3,7 +3,8 @@ from .models import Course
 from . import views
 
 urlpatterns = [
-    path('ressources/subjects/', view=views.SubjectsListView.as_view(), name='SubjectsListView'),
+    path('ressources/subjects', view=views.SubjectsListView.as_view(), name='SubjectsListView'),
+    path('ressources/subjects/<int:year>', view=views.SubjectYearView.as_view(), name='SubjectsListView'),
     path('ressources/subjects/<int:id>', view=views.SubjectsRetriveView.as_view(), name='SubjectsRetrieveView'),
     path('ressources/subjects/create/', view=views.SubjectsCreateView.as_view(), name='SubjectsCreateView'),
     # path('ressources/subjects/<int:id>/delete/', view=views.SubjectsDeleteView.as_view(), name='SubjectsDeleteView'),

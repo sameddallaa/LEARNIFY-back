@@ -24,3 +24,8 @@ class SubjectSerializer(serializers.ModelSerializer):
         
         return super().create(validated_data)
         
+        
+class YearSubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = '__all__'
