@@ -102,12 +102,13 @@ class FileUploadAPIView(APIView):
                     )
                     for user in users
                 ], batch_size=1000, ignore_conflicts=True)
-                for created_user in created_users:
+                for created_user, user in zip(created_users, users):
+                    student = Student.objects.get(user=created_user)
+                    student.save(year=user['year'], group=user['group'])
                     user = find_among_users(users, 'email', created_user.email)
                     password = user['password']
                     user = User.objects.get(email=user['email'])
-                    send_password_after_signup(password, user)
-                    created_user.save()
+                    # send_password_after_signup(password, user)
             if unsuccessful_attempts:
                 return Response({'message': "Some student were not added successfully.", 'unsuccessful_attempts': unsuccessful_attempts}, status=status.HTTP_207_MULTI_STATUS)
             return Response({'success': 'Students were added successfully'}, status=status.HTTP_200_OK)

@@ -26,10 +26,10 @@ class SubjectsUpdateView(generics.UpdateAPIView, generics.RetrieveAPIView):
     serializer_class = SubjectSerializer
     lookup_field = 'id'
 
-class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
-    queryset = Subject.objects.all()
-    serializer_class = SubjectSerializer
-    lookup_field = 'id'
+# class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
+#     queryset = Subject.objects.all()
+#     serializer_class = SubjectSerializer
+#     lookup_field = 'id'
     
 class CoursesRetriveView(generics.RetrieveAPIView):
     queryset = Course.objects.all()

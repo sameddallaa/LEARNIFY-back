@@ -6,7 +6,7 @@ urlpatterns = [
     path('ressources/subjects/', view=views.SubjectsListView.as_view(), name='SubjectsListView'),
     path('ressources/subjects/<int:id>', view=views.SubjectsRetriveView.as_view(), name='SubjectsRetrieveView'),
     path('ressources/subjects/create/', view=views.SubjectsCreateView.as_view(), name='SubjectsCreateView'),
-    path('ressources/subjects/<int:id>/delete/', view=views.SubjectsDeleteView.as_view(), name='SubjectsDeleteView'),
+    # path('ressources/subjects/<int:id>/delete/', view=views.SubjectsDeleteView.as_view(), name='SubjectsDeleteView'),
     path('ressources/subjects/<int:id>/update/', view=views.SubjectsUpdateView.as_view(), name='SubjectsUpdateView'),
     path('ressources/courses/', view=views.CoursesListView.as_view(), name='CoursesListView'),
     path('ressources/courses/<int:id>', view=views.CoursesRetriveView.as_view(), name='CoursesRetrieveView'),
