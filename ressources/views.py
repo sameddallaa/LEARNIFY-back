@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Course, Subject
 from .serializers import CourseSerializer, SubjectSerializer
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 # Create your views here.
 

@@ -17,6 +17,7 @@ from .utils import generate_password, send_password_after_signup, find_among_use
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+import uuid
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
@@ -46,12 +47,20 @@ class SignupView(generics.GenericAPIView):
             teacher_profile.degree = degree
             teacher_profile.save()
             
-            
-            
+def make_username(firstname: str, lastname: str):
+    default = firstname[0] + '.' + lastname
+    # username = firstname[0] + '.' + lastname
+    if not User.objects.filter(username=default).exists():
+        return (default + str(uuid.uuid4())[0:4]).lower()
+    
+    # username = default + uuid.uuid4()[0:4]
+    
+    # return username.lower()
 class FileUploadStudentsAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = UploadedFileSerializer
     permission_classes = [permissions.IsAdminUser]
+    
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -62,10 +71,10 @@ class FileUploadStudentsAPIView(APIView):
             next(students)
             unsuccessful_attempts = []
             for student in students:
-                if not (User.objects.filter(email=student[0]).exists() or User.objects.filter(username=student[1] + student[2])):
+                if not User.objects.filter(email=student[0]).exists():
                     users.append({
                         'email': student[0],
-                        'username': student[1] + student[2],
+                        'username': student[1][0] + '.' + student[2],
                         'first_name': student[1],
                         'last_name': student[2],
                         'group': student[3],
@@ -79,7 +88,7 @@ class FileUploadStudentsAPIView(APIView):
                 else:
                     unsuccessful_attempts.append({
                         'email': student[0],
-                        'username': student[1] + student[2],
+                        # 'username': student[1] + student[2],
                         'first_name': student[1],
                         'last_name': student[2],
                         'group': student[3],
@@ -134,7 +143,7 @@ class FileUploadTeacherAPIView(APIView):
                 if not (User.objects.filter(email=teacher[0]).exists() or User.objects.filter(username=teacher[1] + teacher[2])):
                     users.append({
                         'email': teacher[0],
-                        'username': teacher[1] + teacher[2],
+                        'username': teacher[1][0] + "." + teacher[2],
                         'first_name': teacher[1],
                         'last_name': teacher[2],
                         'degree': teacher[3],
@@ -148,7 +157,7 @@ class FileUploadTeacherAPIView(APIView):
                 else:
                     unsuccessful_attempts.append({
                         'email': teacher[0],
-                        'username': teacher[1] + teacher[2],
+                        # 'username': teacher[1] + teacher[2],
                         'first_name': teacher[1],
                         'last_name': teacher[2],
                         'degree': teacher[3],

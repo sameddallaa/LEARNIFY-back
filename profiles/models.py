@@ -52,6 +52,12 @@ class UserManager(BaseUserManager):
     
     def bulk_create(self, objs: Iterable, *args, **kwargs):
         for obj in objs:
+            i = 1
+            if not self.filter(username=obj.username).exists():
+                obj.username = obj.username.lower()
+            while self.filter(username=obj.username).exists():
+                obj.username = (obj.username + str(i)).lower()
+                i += 1
             obj.save()
         return super().bulk_create(objs, *args, **kwargs)
     def create_superuser(self, email, username, first_name, last_name, password=None, is_student=False, is_staff=True,
