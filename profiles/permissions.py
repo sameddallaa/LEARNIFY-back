@@ -7,11 +7,11 @@ class IsEditorTeacherOrAdminPermission(permissions.DjangoModelPermissions,):
         'GET': ['%(app_label)s.view_%(model_name)s'],
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
-    def has_permission(self, request, view):
-        user = request.user
-        if user.is_editor_teacher or user.is_staff:
-            return True
-        return False
+    # def has_permission(self, request, view):
+    #     user = request.user
+    #     if user.is_editor_teacher or user.is_staff:
+    #         return True
+    #     return False
 
 class IsEditorTeacherPermission(permissions.DjangoModelPermissions):
     perms_map = {
@@ -23,11 +23,11 @@ class IsEditorTeacherPermission(permissions.DjangoModelPermissions):
         'PATCH': ['%(app_label)s.change_%(model_name)s'],
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
-    def has_permission(self, request, view):
-        user = request.user
-        if user.is_authenticated and user.is_editor_teacher:
-            return True
-        return False
+    # def has_permission(self, request, view):
+    #     user = request.user
+    #     if user.is_authenticated and user.is_editor_teacher:
+    #         return True
+    #     return False
     
 class isTeacherPermission(permissions.DjangoModelPermissions):
     perms_map = {

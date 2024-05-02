@@ -96,6 +96,7 @@ class StudentSerializer(serializers.ModelSerializer):
         
 class TeacherSerializer(serializers.ModelSerializer):
     
+    name = serializers.CharField(source='user',read_only=True)
     class Meta:
         model = Teacher
         fields = '__all__'

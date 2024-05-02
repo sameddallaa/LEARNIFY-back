@@ -15,6 +15,7 @@ class Subject(models.Model):
     year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
     coefficient = models.IntegerField(validators=[valid_coeff])
     credit = models.IntegerField()
+    place = models.CharField(default='Amphi D')
     
     
     # def save(self, *args, **kwargs):
@@ -26,6 +27,7 @@ class Subject(models.Model):
     
     
 class Chapter(models.Model):
+    
     name = models.CharField(max_length=255)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)

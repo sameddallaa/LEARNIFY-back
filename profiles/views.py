@@ -83,7 +83,7 @@ class FileUploadStudentsAPIView(APIView):
                         'is_student': True,
                         'is_staff': False,
                         'is_teacher': False,
-                        'is_editor_teacher': False,
+                        # 'is_editor_teacher': False,
                     })
                 else:
                     unsuccessful_attempts.append({
@@ -96,7 +96,7 @@ class FileUploadStudentsAPIView(APIView):
                         'is_student': True,
                         'is_staff': False,
                         'is_teacher': False,
-                        'is_editor_teacher': False,
+                        # 'is_editor_teacher': False,
                     })
             with transaction.atomic():
                 
@@ -267,6 +267,10 @@ class StudentListView(ListAPIView):
     serializer_class = StudentSerializer
     
 class TeacherListView(ListAPIView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
+    
+class TeacherRetrieveView(generics.RetrieveAPIView):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
     

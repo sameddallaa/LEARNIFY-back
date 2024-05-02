@@ -9,6 +9,7 @@ urlpatterns = [
     path('students/', view=views.StudentListView.as_view(), name='StudentListView'),
     path('teachers/', view=views.TeacherListView.as_view(), name='TeacherListView'),
     path('auth/signup/', view=views.SignupView.as_view(), name='SignupView'),
+    path('teachers/<int:pk>', view=views.TeacherRetrieveView.as_view(),name='TeacherRetrieveView'),
     path('csv-signup/students', view=views.FileUploadStudentsAPIView.as_view(), name='csv_bulk_signup'),
     path('csv-signup/teachers', view=views.FileUploadTeacherAPIView.as_view(), name='csv_bulk_signup_teachers'),
     path('auth/login/', view=views.MyTokenObtainPairView.as_view(), name='LoginView'),

@@ -18,6 +18,9 @@ class ChapterSerializer(serializers.ModelSerializer):
         model = Chapter
         fields = '__all__'
 class SubjectSerializer(serializers.ModelSerializer):
+    
+    teacher_name = serializers.CharField(source='main_teacher.user', read_only=True)
+    teacher_email = serializers.CharField(source='main_teacher.user.email', read_only=True)
     class Meta:
         model = Subject
         fields = '__all__'
