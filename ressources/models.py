@@ -9,7 +9,7 @@ def valid_coeff(coeff):
 
 class Subject(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, blank=True)
     main_teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
     teachers = models.ManyToManyField(Teacher, related_name='subjects',)
     year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
@@ -17,19 +17,35 @@ class Subject(models.Model):
     credit = models.IntegerField()
     
     
+    # def save(self, *args, **kwargs):
+    #     # if self.main_teacher not in self.teachers:
+    #     #     self.teachers.add(self.main_teacher)
+    #     super().save(*args, **kwargs)
+    def __str__(self):
+        return self.name
+    
+    
+class Chapter(models.Model):
+    name = models.CharField(max_length=255)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    number = models.IntegerField(default=1)
+    
+    
     def save(self, *args, **kwargs):
-        print(self.teachers)
-        # if self.main_teacher not in self.teachers:
-        #     self.teachers.add(self.main_teacher)
+        existing_chapters = Chapter.objects.filter(subject=self.subject).count()
+        self.number = existing_chapters + 1
+        
         super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.name
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    # teacher = 
-    subject = models.ForeignKey(Subject, null=True, on_delete=models.SET_NULL)
+    chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
+    # subject = models.ForeignKey(Subject, null=True, on_delete=models.SET_NULL)
     content = models.FileField(upload_to='courses/')
     
     def __str__(self):

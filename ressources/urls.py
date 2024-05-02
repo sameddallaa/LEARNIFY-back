@@ -9,6 +9,7 @@ urlpatterns = [
     path('ressources/subjects/create/', view=views.SubjectsCreateView.as_view(), name='SubjectsCreateView'),
     # path('ressources/subjects/<int:id>/delete/', view=views.SubjectsDeleteView.as_view(), name='SubjectsDeleteView'),
     path('ressources/subjects/<int:id>/update/', view=views.SubjectsUpdateView.as_view(), name='SubjectsUpdateView'),
+    path('ressources/<int:id>/chapters/', view=views.ChapterView.as_view(), name='ChapterView'),
     path('ressources/courses/', view=views.CoursesListView.as_view(), name='CoursesListView'),
     path('ressources/courses/<int:id>', view=views.CoursesRetriveView.as_view(), name='CoursesRetrieveView'),
     path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),

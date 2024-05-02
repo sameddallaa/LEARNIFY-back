@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Course, Subject, Year
-from .serializers import CourseSerializer, SubjectSerializer
+from .models import Course, Subject, Year, Chapter
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from rest_framework.views import APIView
@@ -35,6 +35,13 @@ class SubjectYearView(APIView):
         year = kwargs.get('year')
         queryset = Subject.objects.filter(year=Year.objects.get(year=year))
         serializer = SubjectSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ChapterView(APIView):
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        queryset = Chapter.objects.filter(subject=id)
+        serializer = ChapterSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
