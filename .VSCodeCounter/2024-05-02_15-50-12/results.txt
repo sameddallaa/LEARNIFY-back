@@ -1,0 +1,30 @@
+Date : 2024-05-02 15:50:12
+Directory : c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN
+Total : 6 files,  213 codes, 20 comments, 72 blanks, all 305 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |          6 |        213 |         20 |         72 |        305 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                         | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                            |          6 |        213 |         20 |         72 |        305 |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                     | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\__init__.py | Python   |          2 |          0 |          0 |          2 |
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\asgi.py     | Python   |         10 |          0 |          7 |         17 |
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\celery.py   | Python   |          7 |          0 |          5 |         12 |
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\settings.py | Python   |        147 |         18 |         51 |        216 |
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\urls.py     | Python   |         36 |          2 |          2 |         40 |
+| c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\ELEARN\wsgi.py     | Python   |         11 |          0 |          7 |         18 |
+| Total                                                                        |          |        213 |         20 |         72 |        305 |
++------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

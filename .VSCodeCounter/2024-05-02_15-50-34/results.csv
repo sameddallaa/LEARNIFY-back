@@ -1,0 +1,19 @@
+"filename", "language", "Python", "comment", "blank", "total"
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\__init__.py", "Python", 0, 0, 1, 1
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\admin.py", "Python", 32, 2, 4, 38
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\apps.py", "Python", 6, 0, 2, 8
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\forms.py", "Python", 0, 6, 1, 7
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\migrations\0001_initial.py", "Python", 91, 1, 7, 99
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\migrations\0002_alter_group_year.py", "Python", 13, 1, 6, 20
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\migrations\__init__.py", "Python", 0, 0, 1, 1
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\models.py", "Python", 134, 3, 44, 181
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\permissions.py", "Python", 31, 15, 9, 55
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\serializers.py", "Python", 87, 6, 21, 114
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\signals.py", "Python", 22, 0, 7, 29
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\tasks.py", "Python", 11, 0, 2, 13
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\tests.py", "Python", 1, 1, 2, 4
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\tokens.py", "Python", 9, 0, 2, 11
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\urls.py", "Python", 19, 1, 2, 22
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\utils.py", "Python", 25, 0, 11, 36
+"c:\Users\DELL\OneDrive\Documents\Projet 1CS - code\ELEARN\profiles\views.py", "Python", 231, 19, 35, 285
+"Total", "-", 712, 55, 157, 924
