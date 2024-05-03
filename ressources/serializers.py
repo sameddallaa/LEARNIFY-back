@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Subject, Chapter
+from .models import Course, Subject, Chapter, TD
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -12,7 +12,11 @@ class CourseSerializer(serializers.ModelSerializer):
             validated_data['description'] = 'Aucune description'
         
         return super().create(validated_data)
-        
+    
+class TDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TD
+        fields = '__all__'
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter

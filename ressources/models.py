@@ -47,8 +47,20 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
-    # subject = models.ForeignKey(Subject, null=True, on_delete=models.SET_NULL)
     content = models.FileField(upload_to='courses/')
+    
+    def __str__(self):
+        return self.title
+    
+class TD(models.Model):
+    
+    class Meta:
+        verbose_name = 'TD'
+        verbose_name_plural = 'TDs'
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
+    content = models.FileField(upload_to='tds/')
     
     def __str__(self):
         return self.title
