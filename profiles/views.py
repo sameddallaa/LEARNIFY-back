@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction, IntegrityError
 from rest_framework import generics, status, permissions, authentication
 from rest_framework.response import Response
@@ -56,6 +57,7 @@ def make_username(firstname: str, lastname: str):
     # username = default + uuid.uuid4()[0:4]
     
     # return username.lower()
+# @csrf_exempt
 class FileUploadStudentsAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = UploadedFileSerializer
@@ -126,6 +128,7 @@ class FileUploadStudentsAPIView(APIView):
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     
     
+# @csrf_exempt
 class FileUploadTeacherAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = UploadedFileSerializer
