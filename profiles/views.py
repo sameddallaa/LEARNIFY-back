@@ -127,7 +127,7 @@ class FileUploadStudentsAPIView(APIView):
             return Response({'success': 'Students were added successfully'}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid file'}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+#
 @csrf_exempt
 class FileUploadTeacherAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
