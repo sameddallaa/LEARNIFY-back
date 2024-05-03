@@ -52,8 +52,8 @@ class ChapterView(APIView):
 class CoursesRetriveView(generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [isTeacherPermission]
-    lookup_field = 'id'    
+    permission_classes = [permissions.IsAdminUser]
+    lookup_field = 'id'
     
 class CoursesListView(generics.ListAPIView):
     queryset = Course.objects.all()
@@ -62,16 +62,16 @@ class CoursesListView(generics.ListAPIView):
 class CoursesCreateView(generics.CreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsEditorTeacherPermission]
+    permission_classes = [permissions.IsAdminUser]
 
 class CoursesUpdateView(generics.UpdateAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsEditorTeacherPermission]
+    permission_classes = [permissions.IsAdminUser]
     lookup_field = 'id'
 
 class CoursesDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     lookup_field = 'id'    
-    permission_classes = [IsEditorTeacherOrAdminPermission]
+    permission_classes = [permissions.IsAdminUser]

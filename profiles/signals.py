@@ -9,7 +9,7 @@ def create_profile(sender, instance, created, **kwargs):
         if instance.is_student:
             student = Student.objects.create(user=instance)
             student.year, _ = Year.objects.get_or_create(year=0)
-            print('it works so far')
+            # print('it works so far')
             student.group, _ = Group.objects.get_or_create(number=0, year=student.year)
             student.save()
         elif instance.is_teacher:
