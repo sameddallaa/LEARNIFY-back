@@ -159,7 +159,8 @@ DATABASES = {
 # }
 
 
-DATABASE_URL = 'postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django'
+# DATABASE_URL = 'postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django'
+DATABASE_URL = 'postgres://learnify_db_user:1b8ap7W7r2XTrJ7SQoOuJcGxsl7YJKRQ@dpg-coqbvhkf7o1s73ef6u00-a.oregon-postgres.render.com/learnify_db'
 
 DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
 # postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django
