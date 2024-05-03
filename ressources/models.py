@@ -15,7 +15,7 @@ class Subject(models.Model):
     year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
     coefficient = models.IntegerField(validators=[valid_coeff])
     credit = models.IntegerField()
-    place = models.CharField(default='Amphi D')
+    place = models.CharField(default='Amphi D', max_length=255)
     
     
     # def save(self, *args, **kwargs):

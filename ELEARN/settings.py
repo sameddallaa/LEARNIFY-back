@@ -140,18 +140,23 @@ WSGI_APPLICATION = 'ELEARN.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'elearn',
+#         'USER': 'postgres',
+#         'PASSWORD': '15012004a',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
+
+DATABASE_URL = 'postgresql://postgres:wMSNvVqypbFiMhMMFYkZZruVJlNAgTRw@viaduct.proxy.rlwy.net:28941/railway'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'elearn',
-        'USER': 'postgres',
-        'PASSWORD': '15012004a',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
     }
 }
-
-DATABASE_URL = 'postgres://elearn_django_user:DAEJy9BzzsbIJcN92TYDdQM316TQDbTL@dpg-cntksp779t8c73ae30gg-a.frankfurt-postgres.render.com/elearn_django'
 
 # DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
 
