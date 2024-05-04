@@ -9,7 +9,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher, User, Year, Group
-from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer, TeacherYearsSerializer
 from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -19,6 +19,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import uuid
+from ressources.models import Subject
 class SignupView(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
@@ -286,3 +287,15 @@ class GroupListView(ListAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.AllowAny]
+    
+    
+class TeachersYearsView(APIView):
+    def get(self, request, *args, **kwargs):
+        teacher = kwargs.get('teacher')
+        # teacher = Teacher.objects.filter(id=teacher).first()
+        # print(teacher)
+        subjects = Subject.objects.filter(teachers=teacher)
+        years = subjects.values_list('year', flat=True)
+        years = Year.objects.filter(id__in=years)
+        serializer = YearSerializer(years, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -56,7 +56,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             try:
                 student = Student.objects.get(user=user)
                 token['is_student'] = True
+                token['student_id'] = student.id
                 token['year'] = str(student.year.year)
+                token['year_tag'] = str(student.year)
                 token['group'] = str(student.group.number)
             except Student.DoesNotExist:
                 raise ValidationError('Student model instance does not exist')
@@ -64,6 +66,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             try:
                 teacher = Teacher.objects.get(user=user)
                 token['is_teacher'] = True
+                token['teacher_id'] = teacher.id
                 token['degree'] = teacher.degree
                 # token['is_editor'] = 'Yes' if user.is_editor_teacher else 'No'
             except Teacher.DoesNotExist:
@@ -102,10 +105,15 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class YearSerializer(serializers.ModelSerializer):
-    
+    year_tag = serializers.CharField(source='__str__', read_only=True)
     class Meta:
         model = Year
         fields = '__all__'
+        
+class TeacherYearsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Year
+        fields = ['year',]
         
 class GroupSerializer(serializers.ModelSerializer):
     

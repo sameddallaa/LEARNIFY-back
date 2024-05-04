@@ -17,4 +17,6 @@ urlpatterns = [
     path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),
     path('ressources/courses/<int:id>/delete/', view=views.CoursesDeleteView.as_view(), name='CoursesDeleteView'),
     path('ressources/courses/<int:id>/update/', view=views.CoursesUpdateView.as_view(), name='CoursesUpdateView'),
+    path('teachers/<int:teacher>/subjects/', view=views.TeacherSubjectsView.as_view(), name='TeacherSubjectsView'),
+    path('teachers/<int:teacher>/<int:year>/subjects/', view=views.TeacherSubjectPerYearView.as_view(), name='TeacherSubjectPerYearView'),
 ]

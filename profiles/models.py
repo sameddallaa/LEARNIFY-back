@@ -116,9 +116,9 @@ class Year(models.Model):
     class Meta:
         ordering = ['year',]
     def __str__(self):
-        return f"Year {str(self.year)}"
-    
-    
+        if self.year <= 2:
+            return f'{self.year} CP'    
+        return f'{self.year - 2} CS'
 class Group(models.Model):
     year = models.ForeignKey(Year, related_name='groups', null=True, on_delete=models.SET_NULL)
     number = models.IntegerField(validators=[is_valid_group], default=0)

@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from .models import Course, Subject, Year, Chapter, TD
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
+from profiles.models import Teacher
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -106,4 +108,20 @@ class TDRetrieveView(APIView):
         queryset = TD.objects.filter(chapter=chapter)
         print(queryset)
         serializer = TDSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TeacherSubjectsView(APIView):
+    def get(self, request, *args, **kwargs):
+        teacher = kwargs.get('teacher')
+        teacher = Teacher.objects.filter(id=teacher).first()
+        subjects = Subject.objects.filter(teachers=teacher)
+        serializer = TeacherSubjectsSerializer(subjects, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TeacherSubjectPerYearView(APIView):
+    def get (self, request, *args, **kwargs):
+        year = kwargs.get('year')
+        teacher = kwargs.get('teacher')
+        queryset = Subject.objects.filter(year=Year.objects.get(year=year), teachers=teacher)
+        serializer = SubjectSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

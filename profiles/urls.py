@@ -8,6 +8,7 @@ urlpatterns = [
     path('users/<int:pk>/change-password/', view=views.ChangePasswordView.as_view(), name='ChangePasswordView'),
     path('students/', view=views.StudentListView.as_view(), name='StudentListView'),
     path('teachers/', view=views.TeacherListView.as_view(), name='TeacherListView'),
+    path('teachers/<int:teacher>/years/', view=views.TeachersYearsView.as_view(), name='TeacherYearsView'),
     path('auth/signup/', view=views.SignupView.as_view(), name='SignupView'),
     path('teachers/<int:pk>', view=views.TeacherRetrieveView.as_view(),name='TeacherRetrieveView'),
     path('csv-signup/students', view=views.FileUploadStudentsAPIView.as_view(), name='csv_bulk_signup'),
