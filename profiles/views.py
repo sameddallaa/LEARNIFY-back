@@ -292,8 +292,6 @@ class GroupListView(ListAPIView):
 class TeachersYearsView(APIView):
     def get(self, request, *args, **kwargs):
         teacher = kwargs.get('teacher')
-        # teacher = Teacher.objects.filter(id=teacher).first()
-        # print(teacher)
         subjects = Subject.objects.filter(teachers=teacher)
         years = subjects.values_list('year', flat=True)
         years = Year.objects.filter(id__in=years)

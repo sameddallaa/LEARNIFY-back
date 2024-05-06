@@ -11,17 +11,17 @@ class Subject(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
     main_teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
-    teachers = models.ManyToManyField(Teacher, related_name='subjects',)
+    teachers = models.ManyToManyField(Teacher, related_name='subjects',default=[main_teacher], null=True, blank=True)
     year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
     coefficient = models.IntegerField(validators=[valid_coeff])
     credit = models.IntegerField()
     place = models.CharField(default='Amphi D', max_length=255)
     
     
-    # def save(self, *args, **kwargs):
-    #     # if self.main_teacher not in self.teachers:
-    #     #     self.teachers.add(self.main_teacher)
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # if self.main_teacher not in self.teachers:
+        #     self.teachers.add(self.main_teacher)
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.name
     
@@ -57,6 +57,7 @@ class TD(models.Model):
     class Meta:
         verbose_name = 'TD'
         verbose_name_plural = 'TDs'
+        
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)

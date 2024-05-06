@@ -106,7 +106,31 @@ class TDRetrieveView(APIView):
         except Chapter.DoesNotExist:
             return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = TD.objects.filter(chapter=chapter)
-        print(queryset)
+        # print(queryset)
+        serializer = TDSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class SubjectCourseListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = Course.objects.filter(chapter__in=chapters)
+        serializer = CourseSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+class SubjectTDListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = TD.objects.filter(chapter__in=chapters)
         serializer = TDSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

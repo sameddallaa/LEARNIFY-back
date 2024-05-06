@@ -92,7 +92,7 @@ class User(AbstractUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         if not (self.is_student ^ self.is_staff ^ self.is_teacher):
             raise ValidationError('You must choose a role')
-        
+        self.last_name = self.last_name.upper()
         super().save(*args, **kwargs)
 
     def __str__(self):
