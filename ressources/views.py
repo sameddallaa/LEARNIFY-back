@@ -60,6 +60,19 @@ class CoursesRetriveView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAdminUser]
     lookup_field = 'id'
     
+    
+class ChapterCourseRetrieveView(APIView):
+        def get(self, request, *args, **kwargs):
+            subject = kwargs.get('subject')
+            chapter = kwargs.get('chapter')
+            try:
+                chapter = Chapter.objects.get(subject=subject, number=chapter)
+            except Chapter.DoesNotExist:
+                return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+            queryset = Course.objects.filter(chapter=chapter)
+            # print(queryset)
+            serializer = CourseSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 class CourseRetrieveView(APIView):
     permission_classes = [permissions.IsAdminUser]
     def get(self, request, *args, **kwargs):
