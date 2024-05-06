@@ -16,6 +16,8 @@ urlpatterns = [
     path('ressources/courses/<int:id>', view=views.CoursesRetriveView.as_view(), name='CoursesRetrieveView'),
     path('ressources/td/<int:subject>/<int:chapter>/', view=views.TDRetrieveView.as_view(), name='TDRetrieveView'),
     path('ressources/subjects/<int:subject>/td/', view=views.SubjectTDListView.as_view(), name='SubjectTDListView'),
+    path('ressources/tp/<int:subject>/<int:chapter>/', view=views.TPRetrieveView.as_view(), name='TPRetrieveView'),
+    path('ressources/subjects/<int:subject>/tp/', view=views.SubjectTPListView.as_view(), name='SubjectTPListView'),
     path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),
     path('ressources/courses/<int:id>/delete/', view=views.CoursesDeleteView.as_view(), name='CoursesDeleteView'),
     path('ressources/courses/<int:id>/update/', view=views.CoursesUpdateView.as_view(), name='CoursesUpdateView'),

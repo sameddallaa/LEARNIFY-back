@@ -65,3 +65,18 @@ class TD(models.Model):
     
     def __str__(self):
         return self.title
+    
+    
+class TP(models.Model):
+    
+    class Meta:
+        verbose_name = 'TP'
+        verbose_name_plural = 'TPs'
+        
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
+    content = models.FileField(upload_to='tps/')
+    
+    def __str__(self):
+        return self.title

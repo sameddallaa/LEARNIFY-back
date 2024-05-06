@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer
+from .models import Course, Subject, Year, Chapter, TD, TP
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher
@@ -110,6 +110,19 @@ class TDRetrieveView(APIView):
         serializer = TDSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class TPRetrieveView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = TP.objects.filter(chapter=chapter)
+        # print(queryset)
+        serializer = TPSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     
 class SubjectCourseListView(APIView):
     def get(self, request, *args, **kwargs):
@@ -132,6 +145,18 @@ class SubjectTDListView(APIView):
         chapters = Chapter.objects.filter(subject=subject)
         queryset = TD.objects.filter(chapter__in=chapters)
         serializer = TDSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class SubjectTPListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = TP.objects.filter(chapter__in=chapters)
+        serializer = TPSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class TeacherSubjectsView(APIView):

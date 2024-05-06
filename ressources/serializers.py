@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Subject, Chapter, TD
+from .models import Course, Subject, Chapter, TD, TP
 from profiles.models import Teacher
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -18,6 +18,12 @@ class TDSerializer(serializers.ModelSerializer):
     chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
     class Meta:
         model = TD
+        fields = '__all__'
+        
+class TPSerializer(serializers.ModelSerializer):
+    chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
+    class Meta:
+        model = TP
         fields = '__all__'
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
