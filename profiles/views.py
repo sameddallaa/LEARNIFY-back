@@ -262,10 +262,12 @@ class ChangeNameView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ChangePasswordView(generics.UpdateAPIView):
     
-    permission_classes = [IsAccountOwnerPermission]
+    # permission_classes = [IsAccountOwnerPermission]
+    queryset = User.objects.all()
     serializer_class = ChangePasswordSerializer
+    lookup_field = 'pk'
     def get_object(self):
-        obj = self.request.user
+        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
         return obj
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -273,18 +275,17 @@ class ChangePasswordView(generics.UpdateAPIView):
 
         if serializer.is_valid():
             if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+                print(self.object)
+                print(serializer.data.get("old_password"))
+                return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
             response = {
-                'status': 'success',
-                'code': status.HTTP_200_OK,
                 'message': 'Password updated successfully',
-                'data': []
             }
             update_session_auth_hash(request, request.user)
 
-            return Response(response)
+            return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class UserListView(ListAPIView):
     
