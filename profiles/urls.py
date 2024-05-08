@@ -14,6 +14,7 @@ urlpatterns = [
     path('csv-signup/students', view=views.FileUploadStudentsAPIView.as_view(), name='csv_bulk_signup'),
     path('csv-signup/teachers', view=views.FileUploadTeacherAPIView.as_view(), name='csv_bulk_signup_teachers'),
     path('auth/login/', view=views.MyTokenObtainPairView.as_view(), name='LoginView'),
+    path('change-name/<int:pk>/', view=views.ChangeNameView.as_view(), name='ChangeNameView'),
     # path('jwt/create/', view=TokenObtainPairView.as_view(), name='JWTCreateView'),
     path('auth/login/refresh/', view=TokenRefreshView.as_view(), name='JWTRefreshView'),
     path('jwt/verify/', view=TokenVerifyView.as_view(), name='JWTVerifyView'),

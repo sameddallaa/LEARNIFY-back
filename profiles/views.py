@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction, IntegrityError
 from rest_framework import generics, status, permissions, authentication
@@ -9,7 +9,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher, User, Year, Group
-from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer, TeacherYearsSerializer
+from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer, TeacherYearsSerializer, ChangeNameSerializer
 from .permissions import IsAccountOwnerPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -231,7 +231,35 @@ class LoginView(APIView):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email') or None
+        if not User.objects.filter(email=email).exists():
+            return Response(data={
+                'error': 'Email not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        return super(MyTokenObtainPairView, self).post(request, *args, **kwargs)
+    
 
+class ChangeNameView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = ChangeNameSerializer
+    lookup_field = 'pk'
+    def get_object(self):
+        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        return obj
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user = self.object
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            current_user = request.user
+            if not (current_user == self.object or current_user.is_superuser):
+                raise PermissionError('You don\'t have permission to change this user\'s name.')
+            user.first_name = serializer.data.get('first_name')
+            user.last_name = serializer.data.get('last_name')
+            user.save()
+            return Response({'success': f'Name successfully changed to {user.first_name} {user.last_name}'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ChangePasswordView(generics.UpdateAPIView):
     
     permission_classes = [IsAccountOwnerPermission]
@@ -257,7 +285,6 @@ class ChangePasswordView(generics.UpdateAPIView):
             update_session_auth_hash(request, request.user)
 
             return Response(response)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class UserListView(ListAPIView):
     
