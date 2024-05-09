@@ -10,6 +10,7 @@ from profiles.models import Teacher, User, Student
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import exceptions
 import os
 # Create your views here.
 
@@ -213,23 +214,25 @@ class TeacherSubjectPerYearView(APIView):
         serializer = SubjectSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class NoteRetrieveView(generics.RetrieveAPIView):
+class NoteRetrieveView(APIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     
     def get(self, request, *args, **kwargs):
         student = kwargs.get('student')
         subject = kwargs.get('subject')
-        try:
-            student = Student.objects.get(id=student)
-        except Student.DoesNotExist or User.DoesNotExist:
-            return Response({'details': 'Student matching query does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-        try:
-            print(Subject.objects.get(id=subject))
-            note = Note.objects.get(owner=student, subject=subject)
-        except Note.DoesNotExist:
-            return Response({'details': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
+        student = get_object_or_404(Student, id=student)
+        note = get_object_or_404(Note, owner=student, subject=subject)
         serializer = NoteSerializer(note)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        student = kwargs.get('student')
+        subject = kwargs.get('subject')
+        student = get_object_or_404(Student, id=student)
+        note = get_object_or_404(Note, owner=student, subject=subject)
+        serializer = NoteSerializer(note, data=request.data)
         if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
