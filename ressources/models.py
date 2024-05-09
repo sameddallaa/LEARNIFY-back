@@ -1,5 +1,5 @@
 from django.db import models
-from profiles.models import User, Teacher, Year
+from profiles.models import User, Teacher, Year, Student
 # Create your models here.
 
 
@@ -80,3 +80,25 @@ class TP(models.Model):
     
     def __str__(self):
         return self.title
+    
+    
+class Homework(models.Model):
+        
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
+    content = models.FileField(upload_to='devoirs/')
+    
+    class Meta:
+        verbose_name_plural = 'Homework'
+    
+    def __str__(self):
+        return self.title
+    
+class Note(models.Model):
+    owner = models.ForeignKey(Student, on_delete=models.CASCADE,)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    content = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f'{self.owner}\'s note - {self.subject}'

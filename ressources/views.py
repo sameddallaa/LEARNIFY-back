@@ -2,11 +2,11 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD, TP
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer
+from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
-from profiles.models import Teacher
+from profiles.models import Teacher, User, Student
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -136,6 +136,19 @@ class TPRetrieveView(APIView):
         serializer = TPSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class HomeworkRetrieveView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Homework.objects.filter(chapter=chapter)
+        # print(queryset)
+        serializer = HomeworkSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     
 class SubjectCourseListView(APIView):
     def get(self, request, *args, **kwargs):
@@ -158,6 +171,18 @@ class SubjectTDListView(APIView):
         chapters = Chapter.objects.filter(subject=subject)
         queryset = TD.objects.filter(chapter__in=chapters)
         serializer = TDSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class SubjectHomeworkListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = Homework.objects.filter(chapter__in=chapters)
+        serializer = HomeworkSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class SubjectTPListView(APIView):
@@ -187,3 +212,24 @@ class TeacherSubjectPerYearView(APIView):
         queryset = Subject.objects.filter(year=Year.objects.get(year=year), teachers=teacher)
         serializer = SubjectSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class NoteRetrieveView(generics.RetrieveAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    
+    def get(self, request, *args, **kwargs):
+        student = kwargs.get('student')
+        subject = kwargs.get('subject')
+        try:
+            student = Student.objects.get(id=student)
+        except Student.DoesNotExist or User.DoesNotExist:
+            return Response({'details': 'Student matching query does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            print(Subject.objects.get(id=subject))
+            note = Note.objects.get(owner=student, subject=subject)
+        except Note.DoesNotExist:
+            return Response({'details': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = NoteSerializer(note)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

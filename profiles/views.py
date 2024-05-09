@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .tokens import create_token_pair_for_user
 from .models import Student, Teacher, User, Year, Group
 from .serializers import SignupSerializer, StudentSerializer, TeacherSerializer, UserSerializer, UploadedFileSerializer, ChangePasswordSerializer, MyTokenObtainPairSerializer, YearSerializer, GroupSerializer, TeacherYearsSerializer, ChangeNameSerializer
-from .permissions import IsAccountOwnerPermission
+from .permissions import IsAccountOwnerOrAdminPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 import csv

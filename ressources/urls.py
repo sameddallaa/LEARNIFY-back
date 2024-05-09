@@ -21,9 +21,12 @@ urlpatterns = [
     path('ressources/subjects/<int:subject>/cours/', view=views.SubjectTDListView.as_view(), name='SubjectTDListView'),
     path('ressources/tp/<int:subject>/<int:chapter>/', view=views.TPRetrieveView.as_view(), name='TPRetrieveView'),
     path('ressources/subjects/<int:subject>/tp/', view=views.SubjectTPListView.as_view(), name='SubjectTPListView'),
+    path('ressources/homework/<int:subject>/<int:chapter>/', view=views.HomeworkRetrieveView.as_view(), name='HomeworkRetrieveView'),
+    path('ressources/subjects/<int:subject>/homework/', view=views.SubjectHomeworkListView.as_view(), name='SubjectHomeworkListView'),
     path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),
     path('ressources/courses/<int:id>/delete/', view=views.CoursesDeleteView.as_view(), name='CoursesDeleteView'),
     path('ressources/courses/<int:id>/update/', view=views.CoursesUpdateView.as_view(), name='CoursesUpdateView'),
     path('teachers/<int:teacher>/subjects/', view=views.TeacherSubjectsView.as_view(), name='TeacherSubjectsView'),
     path('teachers/<int:teacher>/<int:year>/subjects/', view=views.TeacherSubjectPerYearView.as_view(), name='TeacherSubjectPerYearView'),
+    path('students/<int:student>/subjects/<int:subject>/notes/', view=views.NoteRetrieveView.as_view(), name='NoteRetrieveView'),
 ]

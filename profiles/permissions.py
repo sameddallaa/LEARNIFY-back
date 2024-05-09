@@ -42,9 +42,9 @@ class isTeacherPermission(permissions.DjangoModelPermissions):
 class IsStaffPermission(permissions.DjangoModelPermissions):
     pass
 
-class IsAccountOwnerPermission(permissions.BasePermission):
+class IsAccountOwnerOrAdminPermission(permissions.BasePermission):
     
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user == obj
+        return request.user == obj or request.user.is_superuser
