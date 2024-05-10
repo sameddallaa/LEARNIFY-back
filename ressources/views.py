@@ -3,14 +3,14 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer, CourseUploadSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import exceptions
+from rest_framework import status, exceptions
+from rest_framework.parsers import FileUploadParser
 from .permissions import IsAccountOwnerPermission
 import os
 # Create your views here.
@@ -83,7 +83,6 @@ class CourseRetrieveView(APIView):
         course_path = str(course.content)
         print(os.path.join(settings.MEDIA_ROOT, course_path))
         if not os.path.exists(os.path.join(settings.MEDIA_ROOT, course_path)):
-            print(f"i'm the path {course_path}")
             return Response(data={'error': 'File could not be found'}, status=status.HTTP_404_NOT_FOUND)
         file_name = os.path.basename(course_path)
         course_path = os.path.join(settings.MEDIA_ROOT)
@@ -97,11 +96,16 @@ class CoursesCreateView(generics.CreateAPIView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAdminUser]
 
-class CoursesUpdateView(generics.UpdateAPIView, generics.RetrieveAPIView):
+class CoursesView(generics.CreateAPIView, generics.UpdateAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAdminUser]
+    serializer_class = CourseUploadSerializer
+    # permission_classes = [permissions.IsAdminUser]
     lookup_field = 'id'
+    # parser_classes = [FileUploadParser]
+    
+    # def post(self, request, *args, **kwargs):
+    #     file = request.data['file']
+        
 
 class CoursesDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()

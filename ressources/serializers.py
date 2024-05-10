@@ -14,6 +14,13 @@ class CourseSerializer(serializers.ModelSerializer):
         
         return super().create(validated_data)
     
+    
+class CourseUploadSerializer(serializers.ModelSerializer):
+    content = serializers.FileField()
+    class Meta:
+        model = Course
+        fields = '__all__'
+    
 class TDSerializer(serializers.ModelSerializer):
     chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
     class Meta:
@@ -67,14 +74,14 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
         
-class QuizSerializer(serializers.ModelSerializer):
-    chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
-    
-    class Meta:
-        model = Quiz
-        fields = '__all__'
         
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
+        fields = '__all__'
+class QuizSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True)
+    chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
+    class Meta:
+        model = Quiz
         fields = '__all__'
