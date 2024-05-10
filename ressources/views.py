@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import exceptions
+from .permissions import IsAccountOwnerPermission
 import os
 # Create your views here.
 
@@ -21,10 +22,8 @@ class SubjectsRetriveView(generics.RetrieveAPIView):
     lookup_field = 'id'    
     
 class SubjectsListView(generics.ListAPIView):
-    # lookup_field = 'year'
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
-    # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication,]
     permission_classes = [permissions.IsAdminUser]
 
 class SubjectsCreateView(generics.CreateAPIView):
@@ -217,12 +216,14 @@ class TeacherSubjectPerYearView(APIView):
 class NoteRetrieveView(APIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    permission_classes = [IsAccountOwnerPermission]
     
     def get(self, request, *args, **kwargs):
         student = kwargs.get('student')
         subject = kwargs.get('subject')
         student = get_object_or_404(Student, id=student)
         note = get_object_or_404(Note, owner=student, subject=subject)
+        self.check_object_permissions(request, note)
         serializer = NoteSerializer(note)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
