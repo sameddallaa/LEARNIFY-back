@@ -262,9 +262,9 @@ class ChangeNameView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ChangePasswordView(generics.UpdateAPIView):
     
-    # permission_classes = [IsAccountOwnerPermission]
     queryset = User.objects.all()
     serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAccountOwnerOrAdminPermission]
     lookup_field = 'pk'
     def get_object(self):
         obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])

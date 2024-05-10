@@ -87,6 +87,7 @@ class Homework(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
+    deadline = models.DateTimeField(null=True, blank=True)
     content = models.FileField(upload_to='devoirs/')
     
     class Meta:
@@ -102,3 +103,45 @@ class Note(models.Model):
     
     def __str__(self):
         return f'{self.owner}\'s note - {self.subject}'
+    
+class Quiz(models.Model):
+    
+    class Meta:
+        verbose_name_plural = 'Quizzes'
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    deadline = models.DateTimeField(null=False)
+    number = models.IntegerField(default=1)
+    
+    def save(self, *args, **kwargs):
+        existing_quizzes = Quiz.objects.filter(chapter=self.chapter).count()
+        self.number = existing_quizzes + 1
+        
+        super().save(*args, **kwargs)
+        
+    @property
+    def questions(self):
+        return Question.objects.filter(quiz=self)
+    def __str__(self):
+        return f'{self.chapter} - Quiz #{self.number}'
+
+class Question(models.Model):
+    content = models.TextField()
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    number = models.IntegerField(default=1)
+    
+    def save(self, *args, **kwargs):
+        existing_questions = Question.objects.filter(quiz=self.quiz).count()
+        self.number = existing_questions + 1
+        
+        super().save(*args, **kwargs)
+        
+    def __str__(self):
+        return f'{self.quiz} - Question #{self.number}'
+
+class Answer(models.Model):
+    content = models.CharField(max_length=255)
+    is_correct = models.BooleanField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.content

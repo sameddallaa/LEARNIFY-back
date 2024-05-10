@@ -1,5 +1,10 @@
 from rest_framework import permissions
 
+class IsAccountOwnerOrAdminPermission(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated:
+            return (obj.pk == request.user.pk) or request.user.is_superuser
+        return False
 
 class IsEditorTeacherOrAdminPermission(permissions.DjangoModelPermissions,):
     

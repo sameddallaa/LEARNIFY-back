@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Subject, Chapter, TD, TP, Note, Homework
+from .models import Course, Subject, Chapter, TD, TP, Note, Homework, Quiz, Question, Answer
 from profiles.models import Teacher
 from profiles.serializers import UserSerializer
 class CourseSerializer(serializers.ModelSerializer):
@@ -64,4 +64,17 @@ class NoteSerializer(serializers.ModelSerializer):
     subject_name = serializers.CharField(source='subject', read_only=True)
     class Meta:
         model = Note
+        fields = '__all__'
+        
+        
+class QuizSerializer(serializers.ModelSerializer):
+    chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
+    
+    class Meta:
+        model = Quiz
+        fields = '__all__'
+        
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
         fields = '__all__'

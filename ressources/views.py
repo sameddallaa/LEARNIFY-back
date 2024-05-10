@@ -132,7 +132,6 @@ class TPRetrieveView(APIView):
         except Chapter.DoesNotExist:
             return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = TP.objects.filter(chapter=chapter)
-        # print(queryset)
         serializer = TPSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
