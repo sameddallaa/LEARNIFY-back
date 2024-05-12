@@ -225,18 +225,19 @@ class NoteRetrieveView(APIView):
         student = kwargs.get('student')
         subject = kwargs.get('subject')
         student = get_object_or_404(Student, id=student)
-        note = get_object_or_404(Note, owner=student, subject=subject)
+        subject = Subject.objects.get(id=subject)
+        note, _ = Note.objects.get_or_create(owner=student, subject=subject)
         self.check_object_permissions(request, note)
         serializer = NoteSerializer(note)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         student = kwargs.get('student')
         subject = kwargs.get('subject')
         student = get_object_or_404(Student, id=student)
-        note = get_object_or_404(Note, owner=student, subject=subject)
+        subject = Subject.objects.get(id=subject)
+        note, _ = Note.objects.get_or_create(owner=student, subject=subject)
         serializer = NoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

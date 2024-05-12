@@ -11,7 +11,6 @@ class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
     is_student = serializers.BooleanField(default=True)
     is_teacher = serializers.BooleanField(default=False)
-    # is_editor_teacher = serializers.BooleanField(default=False)
     is_staff = serializers.BooleanField(default=False)
 
     class Meta:
@@ -26,8 +25,6 @@ class SignupSerializer(serializers.ModelSerializer):
         has_multiple_roles = not (attrs.get('is_student') ^ attrs.get('is_teacher') ^ attrs.get('is_staff'))
         if has_multiple_roles:
             raise ValidationError('You must select only one role')
-        # if attrs.get('is_editor_teacher') and not attrs.get('is_teacher'):
-            # raise ValidationError('You must select is_teacher if you select is_editor_teacher')
         return super().validate(attrs)
     
     def create(self, validated_data):
