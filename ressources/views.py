@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer, CourseUploadSerializer
+from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz
+from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer, CourseUploadSerializer, QuizSerializer
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -241,3 +241,31 @@ class NoteRetrieveView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class SubjectQuizListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = Quiz.objects.filter(chapter__in=chapters)
+        serializer = QuizSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+class QuizRetrieveView(APIView):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
+    
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Quiz.objects.filter(chapter=chapter)
+        # print(queryset)
+        serializer = QuizSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

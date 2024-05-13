@@ -21,6 +21,8 @@ urlpatterns = [
     path('ressources/subjects/<int:subject>/cours/', view=views.SubjectTDListView.as_view(), name='SubjectTDListView'),
     path('ressources/tp/<int:subject>/<int:chapter>/', view=views.TPRetrieveView.as_view(), name='TPRetrieveView'),
     path('ressources/subjects/<int:subject>/tp/', view=views.SubjectTPListView.as_view(), name='SubjectTPListView'),
+    path('ressources/quizzes/<int:subject>/<int:chapter>/', view=views.QuizRetrieveView.as_view(), name='QuizRetrieveView'),
+    path('ressources/subjects/<int:subject>/quizzes/', view=views.SubjectQuizListView.as_view(), name='SubjectQuizListView'),
     path('ressources/homework/<int:subject>/<int:chapter>/', view=views.HomeworkRetrieveView.as_view(), name='HomeworkRetrieveView'),
     path('ressources/subjects/<int:subject>/homework/', view=views.SubjectHomeworkListView.as_view(), name='SubjectHomeworkListView'),
     path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),
