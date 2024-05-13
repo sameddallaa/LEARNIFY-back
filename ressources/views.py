@@ -2,8 +2,11 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz
-from .serializers import CourseSerializer, SubjectSerializer, ChapterSerializer, TDSerializer, TeacherSubjectsSerializer, TPSerializer, NoteSerializer, HomeworkSerializer, CourseUploadSerializer, QuizSerializer
+from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz, Forum, Post, Comment
+from .serializers import (CourseSerializer, SubjectSerializer, ChapterSerializer, 
+                          TDSerializer, TeacherSubjectsSerializer, TPSerializer,
+                          NoteSerializer, HomeworkSerializer, CourseUploadSerializer,
+                          QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer)
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -282,7 +285,6 @@ class TDRetrieveView(APIView):
         chapter = kwargs.get('chapter')
         title = request.POST.get('title')
         description = request.POST.get('description') or ""
-        print(request.FILES)
         content = request.FILES.get('content')
         try:
             chapter = Chapter.objects.get(subject=subject, number=chapter)
@@ -324,7 +326,6 @@ class HomeworkRetrieveView(APIView):
         except Chapter.DoesNotExist:
             return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = Homework.objects.filter(chapter=chapter)
-        # print(queryset)
         serializer = HomeworkSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
@@ -455,4 +456,31 @@ class QuizRetrieveView(APIView):
             return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = Quiz.objects.filter(chapter=chapter)
         serializer = QuizSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+class ForumPostListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            forum = Forum.objects.get(subject=subject)
+        except Forum.DoesNotExist:
+            return Response({'details': "forum not found"}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Post.objects.filter(forum=forum)
+        serializer = PostSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PostCommentListView(APIView):
+    def get(self, request, *args, **kwargs):
+        post = kwargs.get('post')
+        try:
+            post = Post.objects.get(id=post)
+        except Post.DoesNotExist:
+            return Response({'details': 'post not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Comment.objects.filter(post=post)
+        serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

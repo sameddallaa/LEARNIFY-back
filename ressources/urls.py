@@ -36,4 +36,6 @@ urlpatterns = [
     path('teachers/<int:teacher>/subjects/', view=views.TeacherSubjectsView.as_view(), name='TeacherSubjectsView'),
     path('teachers/<int:teacher>/<int:year>/subjects/', view=views.TeacherSubjectPerYearView.as_view(), name='TeacherSubjectPerYearView'),
     path('students/<int:student>/subjects/<int:subject>/notes/', view=views.NoteRetrieveView.as_view(), name='NoteRetrieveView'),
+    path('ressources/forums/<int:subject>/',view=views.ForumPostListView.as_view(), name='ForumPostListView'),
+    path('ressources/forums/comments/<int:post>/', view=views.PostCommentListView.as_view(), name='PostCommentListView'),
 ]

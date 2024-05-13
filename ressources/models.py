@@ -172,3 +172,52 @@ class Answer(models.Model):
     
     def __str__(self):
         return f'{self.question} - {self.content}'
+    
+    
+class Forum(models.Model):
+    subject = models.OneToOneField(Subject, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.subject} - Forum'
+    
+    
+class Post(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    content = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    upvotes = models.IntegerField(default=0)
+    attachement = models.FileField(blank=True, null=True, upload_to='forum/')
+    
+    def __str__(self):
+        return f'{self.title} - {self.forum}'
+    
+    def upvote(self):
+        self.upvotes += 1
+        self.save()
+    def downvote(self):
+        self.upvotes -= 1
+        self.save()
+        
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField(null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,)
+    date = models.DateTimeField(auto_now_add=True,)
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE, null=True)
+    upvotes = models.IntegerField(default=0)
+    attachement = models.FileField(blank=True, null=True, upload_to='forum/')
+    def __str__(self):
+        return f"{self.post} - comment by {self.author}"
+    
+    def save(self, *args, **kwargs):
+        self.forum = self.post.forum
+        super().save(*args, **kwargs)
+        
+    def upvote(self):
+        self.upvotes += 1
+        self.save()
+    def downvote(self):
+        self.upvotes -= 1
+        self.save()
