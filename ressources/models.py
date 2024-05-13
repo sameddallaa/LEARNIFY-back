@@ -49,6 +49,13 @@ class Course(models.Model):
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
     content = models.FileField(upload_to='courses/')
+    number = models.IntegerField(default=1)
+    
+    def save(self, *args, **kwargs):
+        existing_courses = Course.objects.filter(chapter=self.chapter).count()
+        self.number = existing_courses + 1
+        
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.title
@@ -63,7 +70,14 @@ class TD(models.Model):
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
     content = models.FileField(upload_to='tds/')
+    number = models.IntegerField(null=True, blank=True, default=1)
     
+    def save(self, *args, **kwargs):
+        existing_tds = TD.objects.filter(chapter=self.chapter).count()
+        self.number = existing_tds + 1
+        
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return self.title
     
@@ -78,7 +92,13 @@ class TP(models.Model):
     description = models.TextField(null=True, blank=True)
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
     content = models.FileField(upload_to='tps/')
+    number = models.IntegerField(null=True, blank=True)
     
+    # def save(self, *args, **kwargs):
+    #     existing_tps = TP.objects.filter(chapter=self.chapter).count()
+    #     self.number = existing_tps + 1
+        
+    #     super().save(*args, **kwargs)
     def __str__(self):
         return self.title
     
@@ -90,7 +110,13 @@ class Homework(models.Model):
     chapter = models.ForeignKey(Chapter, null=True, on_delete=models.SET_NULL)
     deadline = models.DateTimeField(null=True, blank=True)
     content = models.FileField(upload_to='devoirs/')
+    number = models.IntegerField(null=True, blank=True, default=1)
     
+    def save(self, *args, **kwargs):
+        existing_homeworks = Homework.objects.filter(chapter=self.chapter).count()
+        self.number = existing_homeworks + 1
+        
+        super().save(*args, **kwargs)
     class Meta:
         verbose_name_plural = 'Homework'
     
