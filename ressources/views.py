@@ -111,7 +111,7 @@ class CoursesDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     lookup_field = 'id'    
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
     
     
 class TDRetrieveView(APIView):
@@ -266,6 +266,5 @@ class QuizRetrieveView(APIView):
         except Chapter.DoesNotExist:
             return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = Quiz.objects.filter(chapter=chapter)
-        # print(queryset)
         serializer = QuizSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

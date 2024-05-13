@@ -86,12 +86,10 @@ class FileUploadStudentsAPIView(APIView):
                         'is_student': True,
                         'is_staff': False,
                         'is_teacher': False,
-                        # 'is_editor_teacher': False,
                     })
                 else:
                     unsuccessful_attempts.append({
                         'email': student[0],
-                        # 'username': student[1] + student[2],
                         'first_name': student[1],
                         'last_name': student[2],
                         'group': student[3],
@@ -99,7 +97,6 @@ class FileUploadStudentsAPIView(APIView):
                         'is_student': True,
                         'is_staff': False,
                         'is_teacher': False,
-                        # 'is_editor_teacher': False,
                     })
             with transaction.atomic():
                 
@@ -151,25 +148,20 @@ class FileUploadTeacherAPIView(APIView):
                         'first_name': teacher[1],
                         'last_name': teacher[2],
                         'degree': teacher[3],
-                        # 'is_editor_teacher': teacher[4],
                         'password': generate_password(12),
                         'is_student': False,
                         'is_staff': False,
                         'is_teacher': True,
-                        # 'is_editor_teacher': teacher[4] == "éditeur",
                     })
                 else:
                     unsuccessful_attempts.append({
                         'email': teacher[0],
-                        # 'username': teacher[1] + teacher[2],
                         'first_name': teacher[1],
                         'last_name': teacher[2],
                         'degree': teacher[3],
-                        # 'year': teacher[4],
                         'is_student': False,
                         'is_staff': False,
                         'is_teacher': True,
-                        # 'is_editor_teacher': False,
                     })
             with transaction.atomic():
                 

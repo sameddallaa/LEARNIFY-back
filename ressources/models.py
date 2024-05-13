@@ -145,4 +145,4 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.content
+        return f'{self.question} - {self.content}'
