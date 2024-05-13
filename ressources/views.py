@@ -48,6 +48,13 @@ class ChapterView(APIView):
         queryset = Chapter.objects.filter(subject=id)
         serializer = ChapterSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        chapter_name = request.POST.get('chapter_name')
+        chapter_desc = request.POST.get('chapter_desc') or None
+        chapter = Chapter.objects.create(subject=Subject.objects.get(id=id), name=chapter_name, description=chapter_desc)
+        return Response({'response': "Chapter has been added"}, status=status.HTTP_201_CREATED)
 
 # class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
 #     queryset = Subject.objects.all()
