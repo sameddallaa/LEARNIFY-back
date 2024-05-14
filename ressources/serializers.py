@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Subject, Chapter, TD, TP, Note, Homework, Quiz, Question, Answer, Forum, Post, Comment
+from .models import Course, Subject, Chapter, TD, TP, Note, Homework, Quiz, Question, Answer, Forum, Post, Comment, Other
 from profiles.models import Teacher
 from profiles.serializers import UserSerializer
 class CourseSerializer(serializers.ModelSerializer):
@@ -96,6 +96,7 @@ class ForumSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author', read_only=True)
     subject = serializers.CharField(source='forum.subject', read_only=True)
+    # comments = serializers.CharField(source='comments', read_only=True)
     class Meta:
         model = Post
         fields = '__all__'
@@ -107,4 +108,9 @@ class CommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Comment
+        fields = '__all__'
+        
+class OtherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Other
         fields = '__all__'

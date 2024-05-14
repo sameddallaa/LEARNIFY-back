@@ -46,6 +46,8 @@ class SubjectYearView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class ChapterView(APIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
     def get(self, request, *args, **kwargs):
         id = kwargs.get('id')
         queryset = Chapter.objects.filter(subject=id)
@@ -54,9 +56,10 @@ class ChapterView(APIView):
     
     def post(self, request, *args, **kwargs):
         id = kwargs.get('id')
-        chapter_name = request.POST.get('chapter_name')
-        chapter_desc = request.POST.get('chapter_desc') or ""
+        chapter_name = request.data.get('chapter_name')
+        chapter_desc = request.data.get('chapter_desc') or ""
         chapter = Chapter.objects.create(subject=Subject.objects.get(id=id), name=chapter_name, description=chapter_desc)
+        chapter.save()
         return Response({'response': "Chapter has been added"}, status=status.HTTP_201_CREATED)
 
 # class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):

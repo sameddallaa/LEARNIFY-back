@@ -123,6 +123,21 @@ class Homework(models.Model):
     def __str__(self):
         return self.title
     
+class Other(models.Model):
+    
+    title = models.CharField(max_length=255)
+    link = models.URLField()
+    number = models.IntegerField(default=1)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    def save(self, *args, **kwargs):
+        existing_others = Other.objects.filter(chapter=self.chapter).count()
+        self.number = existing_others + 1
+        
+        super().save(*args, **kwargs)
+        
+    def __str__(self):
+        return self.title
+    
 class Note(models.Model):
     owner = models.ForeignKey(Student, on_delete=models.CASCADE,)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -189,6 +204,10 @@ class Post(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
     upvotes = models.IntegerField(default=0)
     attachement = models.FileField(blank=True, null=True, upload_to='forum/')
+    
+    @property
+    def comments(self):
+        return Comment.objects.filter(post=self).count()
     
     def __str__(self):
         return f'{self.title} - {self.forum}'
