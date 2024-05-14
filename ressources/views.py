@@ -6,7 +6,8 @@ from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz
 from .serializers import (CourseSerializer, SubjectSerializer, ChapterSerializer, 
                           TDSerializer, TeacherSubjectsSerializer, TPSerializer,
                           NoteSerializer, HomeworkSerializer, CourseUploadSerializer,
-                          QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer)
+                          QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer,
+                          TeacherSubjectsPerYearSerializer)
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -407,6 +408,17 @@ class TeacherSubjectPerYearView(APIView):
         queryset = Subject.objects.filter(year=Year.objects.get(year=year), teachers=teacher)
         serializer = SubjectSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TeacherSubjectView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            teacher_id = kwargs.get('teacher')
+            teacher = Teacher.objects.get(pk=teacher_id)
+        except Teacher.DoesNotExist:
+            return Response({'error': 'Teacher not found'}, status=404)
+        
+        serializer = TeacherSubjectsPerYearSerializer(teacher,)
+        return Response(serializer.data)
 
 class NoteRetrieveView(APIView):
     queryset = Note.objects.all()

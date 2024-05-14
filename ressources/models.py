@@ -36,7 +36,7 @@ class Chapter(models.Model):
     
     
     def save(self, *args, **kwargs):
-        existing_chapters = Chapter.objects.filter(subject=self.subject).count()
+        existing_chapters = Chapter.objects.filter(subject=self.subject).distinct().count()
         self.number = existing_chapters + 1
         
         super().save(*args, **kwargs)
@@ -94,11 +94,11 @@ class TP(models.Model):
     content = models.FileField(upload_to='tps/')
     number = models.IntegerField(null=True, blank=True)
     
-    # def save(self, *args, **kwargs):
-    #     existing_tps = TP.objects.filter(chapter=self.chapter).count()
-    #     self.number = existing_tps + 1
+    def save(self, *args, **kwargs):
+        existing_tps = TP.objects.filter(chapter=self.chapter).distinct().count()
+        self.number = existing_tps + 1
         
-    #     super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.title
     

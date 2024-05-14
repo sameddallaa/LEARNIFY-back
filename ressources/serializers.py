@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Course, Subject, Chapter, TD, TP, Note, Homework, Quiz, Question, Answer, Forum, Post, Comment, Other
-from profiles.models import Teacher
-from profiles.serializers import UserSerializer
+from profiles.models import Teacher, Year
+from profiles.serializers import UserSerializer, YearSerializer
 class CourseSerializer(serializers.ModelSerializer):
     chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
     class Meta:
@@ -60,6 +60,32 @@ class TeacherSubjectsSerializer(serializers.ModelSerializer):
     year_number = serializers.IntegerField(source='year.year', read_only=True)
     class Meta:
         model = Subject
+        fields = '__all__'
+        
+        
+class TeacherSubjectsPerYearSerializer(serializers.ModelSerializer):
+    years_subjects = serializers.SerializerMethodField()
+    # subjects = serializers.SerializerMethodField()
+    
+    def get_years_subjects(self, obj):
+        years = Subject.objects.filter(teachers=obj).values_list('year')
+        subjects = []
+        for year in years:
+            subjects.append({'year': YearSerializer(Year.objects.get(id=year)), 
+                             'subjects': SubjectSerializer(Subject.objects.filter(year=year, teachers=obj), many=True).data})
+        return subjects
+    # def get_subjects(self, obj):
+    #     subjects = Subject.objects.filter(teachers=obj)
+    #     subjects_serialized = SubjectSerializer(subjects, many=True).data
+    #     years = Year.objects.values_list('year', flat=True)
+    #     years_serialized = YearSerializer(years, many=True).data
+    #     data = [{
+    #         'year': year,
+    #         'subjects': [subject for subject in subjects_serialized]
+    #     } for year in years_serialized]
+    #     return data
+    class Meta:
+        model = Teacher
         fields = '__all__'
 class YearSubjectSerializer(serializers.ModelSerializer):
     class Meta:
