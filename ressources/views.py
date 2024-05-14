@@ -90,8 +90,8 @@ class ChapterCourseRetrieveView(APIView):
     def post(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
         chapter = kwargs.get('chapter')
-        title = request.POST.get('title')
-        description = request.POST.get('description') or ""
+        title = request.data.get('title')
+        description = request.data.get('description') or ""
         print(request.FILES)
         content = request.FILES.get('content')
         try:
@@ -286,8 +286,8 @@ class TDRetrieveView(APIView):
     def post(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
         chapter = kwargs.get('chapter')
-        title = request.POST.get('title')
-        description = request.POST.get('description') or ""
+        title = request.data.get('title')
+        description = request.data.get('description') or ""
         content = request.FILES.get('content')
         try:
             chapter = Chapter.objects.get(subject=subject, number=chapter)
@@ -310,8 +310,8 @@ class TPRetrieveView(APIView):
     def post(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
         chapter = kwargs.get('chapter')
-        title = request.POST.get('title')
-        description = request.POST.get('description') or ""
+        title = request.data.get('title')
+        description = request.data.get('description') or ""
         content = request.FILES.get('content')
         try:
             chapter = Chapter.objects.get(subject=subject, number=chapter)
@@ -334,9 +334,9 @@ class HomeworkRetrieveView(APIView):
     def post(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
         chapter = kwargs.get('chapter')
-        title = request.POST.get('title')
-        deadline = request.POST.get('deadline')
-        description = request.POST.get('description') or ""
+        title = request.data.get('title')
+        deadline = request.data.get('deadline')
+        description = request.data.get('description') or ""
         content = request.FILES.get('content')
         try:
             chapter = Chapter.objects.get(subject=subject, number=chapter)
