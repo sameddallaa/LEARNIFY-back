@@ -68,10 +68,11 @@ class TeacherSubjectsPerYearSerializer(serializers.ModelSerializer):
     # subjects = serializers.SerializerMethodField()
     
     def get_years_subjects(self, obj):
-        years = Subject.objects.filter(teachers=obj).values_list('year')
+        years = Subject.objects.filter(teachers=obj).distinct().values_list('year')
+        # years = Year.objects.filter(pk__in=years)
         subjects = []
         for year in years:
-            subjects.append({'year': YearSerializer(Year.objects.get(id=year)), 
+            subjects.append({'year': YearSerializer(Year.objects.get(pk=year[0])).data, 
                              'subjects': SubjectSerializer(Subject.objects.filter(year=year, teachers=obj), many=True).data})
         return subjects
     # def get_subjects(self, obj):
