@@ -63,6 +63,51 @@ class ChapterView(APIView):
         chapter.save()
         return Response({'response': "Chapter has been added"}, status=status.HTTP_201_CREATED)
 
+
+class ChapterEditView(APIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
+    
+    
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        number = kwargs.get('chapter')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=number)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'Chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ChapterSerializer(chapter)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def put(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        number = kwargs.get('chapter')
+        chapter_name = request.data.get('chapter_name')
+        chapter_desc = request.data.get('chapter_desc') or ""
+        chapter = Chapter.objects.get(subject=subject, number=number,)
+        # if chapter_name:
+        chapter.name = chapter_name
+        # if chapter_desc:
+        chapter.description = chapter_desc
+        chapter.save()
+        return Response({'response': "Chapter has been updated"}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        number = kwargs.get('chapter')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=number)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'Chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapter.delete()
+        return Response({'response': "Chapter has been deleted"}, status=status.HTTP_204_NO_CONTENT)
 # class SubjectsDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
 #     queryset = Subject.objects.all()
 #     serializer_class = SubjectSerializer

@@ -10,6 +10,7 @@ urlpatterns = [
     # path('ressources/subjects/<int:id>/delete/', view=views.SubjectsDeleteView.as_view(), name='SubjectsDeleteView'),
     path('ressources/subjects/<int:id>/update/', view=views.SubjectsUpdateView.as_view(), name='SubjectsUpdateView'),
     path('ressources/<int:id>/chapters/', view=views.ChapterView.as_view(), name='ChapterView'),
+    path('ressources/<int:subject>/chapters/<int:chapter>/edit/', view=views.ChapterEditView.as_view(), name='ChapterEditView'),
     path('ressources/courses/', view=views.CoursesListView.as_view(), name='CoursesListView'),
     path('ressources/course/<int:id>', view=views.CourseRetrieveView.as_view(), name='CourseRetrieveView'),
     path('ressources/courses/<int:id>', view=views.CoursesRetriveView.as_view(), name='CoursesRetrieveView'),
