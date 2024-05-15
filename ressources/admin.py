@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Course, Subject, Chapter, TD, TP, Homework, Note, Quiz, Question, Answer, Forum, Post, Comment
+from .models import (Course, Subject, Chapter,
+                     TD, TP, Homework, Note,
+                     Quiz, Question, Answer,
+                     Forum, Post, Comment, Other, News)
 # Register your models here.
 
 admin.site.register(Subject)
@@ -15,3 +18,5 @@ admin.site.register(Answer)
 admin.site.register(Forum)
 admin.site.register(Post)
 admin.site.register(Comment)
+admin.site.register(Other)
+admin.site.register(News)

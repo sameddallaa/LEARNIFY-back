@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import Course, Subject, Chapter, TD, TP, Note, Homework, Quiz, Question, Answer, Forum, Post, Comment, Other
+from .models import (Course, Subject, Chapter,
+                     TD, TP, Note, Homework,
+                     Quiz, Question, Answer,
+                     Forum, Post, Comment, Other,
+                     News)
 from profiles.models import Teacher, Year
 from profiles.serializers import UserSerializer, YearSerializer
 class CourseSerializer(serializers.ModelSerializer):
@@ -75,16 +79,6 @@ class TeacherSubjectsPerYearSerializer(serializers.ModelSerializer):
             subjects.append({'year': YearSerializer(Year.objects.get(pk=year[0])).data, 
                              'subjects': SubjectSerializer(Subject.objects.filter(year=year, teachers=obj), many=True).data})
         return subjects
-    # def get_subjects(self, obj):
-    #     subjects = Subject.objects.filter(teachers=obj)
-    #     subjects_serialized = SubjectSerializer(subjects, many=True).data
-    #     years = Year.objects.values_list('year', flat=True)
-    #     years_serialized = YearSerializer(years, many=True).data
-    #     data = [{
-    #         'year': year,
-    #         'subjects': [subject for subject in subjects_serialized]
-    #     } for year in years_serialized]
-    #     return data
     class Meta:
         model = Teacher
         fields = '__all__'
@@ -138,6 +132,12 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class OtherSerializer(serializers.ModelSerializer):
+    subject = serializers.CharField(source='chapter.subject', read_only=True)
     class Meta:
         model = Other
+        fields = '__all__'
+        
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
         fields = '__all__'

@@ -33,6 +33,7 @@ class Chapter(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     number = models.IntegerField(default=1)
+    is_visible = models.BooleanField(default=True)
     
     
     def save(self, *args, **kwargs):
@@ -129,6 +130,7 @@ class Other(models.Model):
     link = models.URLField()
     number = models.IntegerField(default=1)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    
     def save(self, *args, **kwargs):
         existing_others = Other.objects.filter(chapter=self.chapter).count()
         self.number = existing_others + 1
@@ -240,3 +242,17 @@ class Comment(models.Model):
     def downvote(self):
         self.upvotes -= 1
         self.save()
+        
+class News(models.Model):
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='news/images/', null=True, blank=True)
+    attachement = models.FileField(upload_to='news/attachements/', null=True, blank=True)
+    
+    
+    class Meta:
+        verbose_name_plural = 'News'
+        
+    def __str__(self):
+        return f'{self.title}'

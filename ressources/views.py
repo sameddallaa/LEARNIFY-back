@@ -2,12 +2,12 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz, Forum, Post, Comment
+from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz, Forum, Post, Other, Comment, News
 from .serializers import (CourseSerializer, SubjectSerializer, ChapterSerializer, 
                           TDSerializer, TeacherSubjectsSerializer, TPSerializer,
                           NoteSerializer, HomeworkSerializer, CourseUploadSerializer,
                           QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer,
-                          TeacherSubjectsPerYearSerializer)
+                          TeacherSubjectsPerYearSerializer, OtherSerializer, NewsSerializer)
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -275,6 +275,38 @@ class ChapterHomeworkDeleteView(APIView):
             return Response({'details': 'Homework not found'}, status=status.HTTP_404_NOT_FOUND)
         homework.delete()
         return Response({'details': 'Homework deleted'}, status=status.HTTP_204_NO_CONTENT)
+    
+class ChapterOtherDeleteView(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        number = kwargs.get('other')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            queryset = Other.objects.get(chapter=chapter, number=number)
+        except Other.DoesNotExist:
+            return Response({'details': 'Ressource not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = OtherSerializer(queryset)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def delete(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        number = kwargs.get('other')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            other = Other.objects.get(chapter=chapter, number=number)
+        except Other.DoesNotExist:
+            return Response({'details': 'Ressource not found'}, status=status.HTTP_404_NOT_FOUND)
+        other.delete()
+        return Response({'details': 'Ressource deleted'}, status=status.HTTP_204_NO_CONTENT)
 class CourseRetrieveView(APIView):
     permission_classes = [permissions.IsAdminUser]
     def get(self, request, *args, **kwargs):
@@ -426,6 +458,43 @@ class SubjectHomeworkListView(APIView):
         serializer = HomeworkSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class SubjectOtherListView(APIView):
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        try:
+            subject = Subject.objects.get(id=subject)
+        except Subject.DoesNotExist:
+            return Response({'details': 'Subject not found'}, status=status.HTTP_404_NOT_FOUND)
+        chapters = Chapter.objects.filter(subject=subject)
+        queryset = Other.objects.filter(chapter__in=chapters)
+        serializer = OtherSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        
+class OtherRetrieveView(APIView):
+    serializer_class = OtherSerializer
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Chapter.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Other.objects.filter(chapter=chapter)
+        serializer = OtherSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        subject = kwargs.get('subject')
+        chapter = kwargs.get('chapter')
+        title = request.data.get('title')
+        link = request.data.get('link')
+        number = request.data.get('number')
+        try:
+            chapter = Chapter.objects.get(subject=subject, number=chapter)
+        except Other.DoesNotExist:
+            return Response({'details': 'chapter not found'}, status=status.HTTP_404_NOT_FOUND)
+        other = Other.objects.create(chapter=chapter, title=title, link=link, number=number)
+        return Response({'details': 'ressource created'}, status=status.HTTP_201_CREATED)
 class SubjectTPListView(APIView):
     def get(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
@@ -544,3 +613,12 @@ class PostCommentListView(APIView):
         queryset = Comment.objects.filter(post=post)
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class NewsView(generics.ListCreateAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    
+    
+class NewsDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
