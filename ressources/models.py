@@ -206,7 +206,7 @@ class Post(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
     upvotes = models.ManyToManyField(User, blank=True, related_name='upvoted_posts')
     downvotes = models.ManyToManyField(User, blank=True, related_name='downvoted_posts')
-    attachement = models.FileField(blank=True, null=True, upload_to='forum/')
+    attachment = models.FileField(blank=True, null=True, upload_to='forum/')
     # comments = models.ManyToManyField(Comment)
     @property
     def comments(self):
@@ -238,7 +238,7 @@ class Comment(models.Model):
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, null=True)
     upvotes = models.ManyToManyField(User, blank=True, related_name='upvoted_comments')
     downvotes = models.ManyToManyField(User, blank=True, related_name='downvoted_comments')
-    attachement = models.FileField(blank=True, null=True, upload_to='forum/')
+    attachment = models.FileField(blank=True, null=True, upload_to='forum/')
     def __str__(self):
         return f"{self.post} - comment by {self.author}"
     
@@ -266,7 +266,8 @@ class News(models.Model):
     body = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='news/images/', null=True, blank=True)
-    attachement = models.FileField(upload_to='news/attachements/', null=True, blank=True)
+    year = models.ForeignKey(Year, blank=True, null=True, on_delete=models.CASCADE)
+    attachment = models.FileField(upload_to='news/attachments/', null=True, blank=True)
     
     
     class Meta:

@@ -643,7 +643,27 @@ class NewsView(generics.ListCreateAPIView):
     queryset = News.objects.all().order_by('date')
     serializer_class = NewsSerializer
     
+    def get(self, request, *args, **kwargs):
+        year = kwargs.get('year')
+        try:
+            year = Year.objects.get(year=year)
+        except Year.DoesNotExist:
+            return Response({'error': 'Year not found'}, status=status.HTTP_404_NOT_FOUND)
+        news = News.objects.filter(year=year)
+        serializer = NewsSerializer(news, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK,)
     
+    def post(self, request, *args, **kwargs):
+        year = kwargs.get('year')
+        year = Year.objects.get(year=year)
+        title = request.data.get('title')
+        body = request.data.get('body')
+        image = request.FILES.get('image') or None
+        attachment = request.FILES.get('attachment') or None
+        
+        news = News.objects.create(title=title, body=body, year=year, image=image, attachment=attachment)
+        news.save()
+        return Response({"details": "success"}, status=status.HTTP_200_OK)
 class NewsDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer

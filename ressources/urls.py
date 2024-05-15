@@ -39,7 +39,7 @@ urlpatterns = [
     path('students/<int:student>/subjects/<int:subject>/notes/', view=views.NoteRetrieveView.as_view(), name='NoteRetrieveView'),
     path('ressources/forums/<int:subject>/',view=views.ForumPostListView.as_view(), name='ForumPostListView'),
     path('ressources/forums/comments/<int:post>/', view=views.PostCommentListView.as_view(), name='PostCommentListView'),
-    path('news/', view=views.NewsView.as_view(), name='NewsView'),
-    path('news/<int:pk>/', view=views.NewsDetailView.as_view(), name='NewsDetailView'),
+    path('news/<int:year>/', view=views.NewsView.as_view(), name='NewsView'),
+    path('news/<int:pk>/detail/', view=views.NewsDetailView.as_view(), name='NewsDetailView'),
     path('posts/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
 ]
