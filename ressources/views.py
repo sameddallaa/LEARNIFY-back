@@ -7,7 +7,8 @@ from .serializers import (CourseSerializer, SubjectSerializer, ChapterSerializer
                           TDSerializer, TeacherSubjectsSerializer, TPSerializer,
                           NoteSerializer, HomeworkSerializer, CourseUploadSerializer,
                           QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer,
-                          TeacherSubjectsPerYearSerializer, OtherSerializer, NewsSerializer)
+                          TeacherSubjectsPerYearSerializer, OtherSerializer, NewsSerializer,
+                          ForumPostsSerializer, PostVoteSerializer)
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -599,8 +600,7 @@ class ForumPostListView(APIView):
             forum = Forum.objects.get(subject=subject)
         except Forum.DoesNotExist:
             return Response({'details': "forum not found"}, status=status.HTTP_404_NOT_FOUND)
-        queryset = Post.objects.filter(forum=forum)
-        serializer = PostSerializer(queryset, many=True)
+        serializer = ForumPostsSerializer(forum)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class PostCommentListView(APIView):
@@ -614,8 +614,33 @@ class PostCommentListView(APIView):
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class PostVoteView(APIView):
+    serializer_class = PostVoteSerializer
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            id = kwargs.get('id')
+            post = Post.objects.get(id=id)
+        except Post.DoesNotExist:
+            return Response({'details': 'post not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = PostVoteSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            id = kwargs.get('id')
+            post = Post.objects.get(id=id)
+        except Post.DoesNotExist:
+            return Response({'details': 'post not found'}, status=status.HTTP_404_NOT_FOUND)
+        if request.data.get('type') == 'upvote':
+            post.upvote(request.user)
+        elif request.data.get('type') == 'downvote':
+            post.downvotes(request.user)
+        # serializer = PostVoteSerializer(post)
+        return Response({'details': 'success'}, status=status.HTTP_200_OK)
+        
 class NewsView(generics.ListCreateAPIView):
-    queryset = News.objects.all()
+    queryset = News.objects.all().order_by('date')
     serializer_class = NewsSerializer
     
     

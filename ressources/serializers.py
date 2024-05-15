@@ -116,17 +116,58 @@ class ForumSerializer(serializers.ModelSerializer):
         
 class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author', read_only=True)
-    subject = serializers.CharField(source='forum.subject', read_only=True)
+    comments = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
+    votes = serializers.SerializerMethodField()
+    # subject = serializers.CharField(source='forum.subject', read_only=True)
     # comments = serializers.CharField(source='comments', read_only=True)
+    
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(post=obj)
+        return CommentSerializer(comments, many=True).data
+    
+    def get_comment_count(self, obj):
+        comments = Comment.objects.filter(post=obj)
+        return comments.count()
+
+    def get_votes(self, obj):
+        upvotes = obj.get_votes
+        return upvotes
     class Meta:
         model = Post
         fields = '__all__'
         
+class PostVoteSerializer(serializers.ModelSerializer):
+    
+    votes = serializers.SerializerMethodField()
+    
+    def get_votes(self, obj):
+        votes = obj.get_votes
+        return votes
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'upvotes', 'downvotes', 'votes']
+        
+class ForumPostsSerializer(serializers.ModelSerializer):
+    subject_name = serializers.CharField(source='subject', read_only=True)
+    posts = serializers.SerializerMethodField()
+    
+    def get_posts(self, obj):
+        posts = Post.objects.filter(forum=obj)
+        return PostSerializer(posts, many=True).data
+    
+    class Meta:
+        model = Forum
+        fields = '__all__'
 class CommentSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source='post.author', read_only=True)
+    op_name = serializers.CharField(source='post.author', read_only=True)
     commenter_name = serializers.CharField(source='author', read_only=True)
     og_post_title = serializers.CharField(source='post.title', read_only=True)
+    votes = serializers.SerializerMethodField()
     
+    
+    def get_votes(self, obj):
+        return obj.get_votes
     class Meta:
         model = Comment
         fields = '__all__'

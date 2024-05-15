@@ -204,9 +204,10 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
-    upvotes = models.IntegerField(default=0)
+    upvotes = models.ManyToManyField(User, blank=True, related_name='upvoted_posts')
+    downvotes = models.ManyToManyField(User, blank=True, related_name='downvoted_posts')
     attachement = models.FileField(blank=True, null=True, upload_to='forum/')
-    
+    # comments = models.ManyToManyField(Comment)
     @property
     def comments(self):
         return Comment.objects.filter(post=self).count()
@@ -214,12 +215,20 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.title} - {self.forum}'
     
-    def upvote(self):
-        self.upvotes += 1
+    def upvote(self, user: User):
+        self.upvotes.add(user)
+        if user in self.downvotes.all():
+            self.downvotes.remove(user)
         self.save()
-    def downvote(self):
-        self.upvotes -= 1
+    def downvote(self, user: User):
+        self.downvotes.add(user)
+        if user in self.upvotes.all():
+            self.upvotes.remove(user)
         self.save()
+        
+    @property
+    def get_votes(self):
+        return self.upvotes.count() - self.downvotes.count()
         
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
@@ -227,7 +236,8 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,)
     date = models.DateTimeField(auto_now_add=True,)
     forum = models.ForeignKey(Forum, on_delete=models.CASCADE, null=True)
-    upvotes = models.IntegerField(default=0)
+    upvotes = models.ManyToManyField(User, blank=True, related_name='upvoted_comments')
+    downvotes = models.ManyToManyField(User, blank=True, related_name='downvoted_comments')
     attachement = models.FileField(blank=True, null=True, upload_to='forum/')
     def __str__(self):
         return f"{self.post} - comment by {self.author}"
@@ -236,12 +246,20 @@ class Comment(models.Model):
         self.forum = self.post.forum
         super().save(*args, **kwargs)
         
-    def upvote(self):
-        self.upvotes += 1
+    def upvote(self, user: User):
+        self.upvotes.add(user)
+        if user in self.downvotes.all():
+            self.downvotes.remove(user)
         self.save()
-    def downvote(self):
-        self.upvotes -= 1
+    def downvote(self, user: User):
+        self.downvotes.add(user)
+        if user in self.upvotes.all():
+            self.upvotes.remove(user)
         self.save()
+        
+    @property
+    def get_votes(self):
+        return self.upvotes.count() - self.downvotes.count()
         
 class News(models.Model):
     title = models.CharField(max_length=255)
