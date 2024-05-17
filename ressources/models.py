@@ -216,12 +216,20 @@ class Post(models.Model):
         return f'{self.title} - {self.forum}'
     
     def upvote(self, user: User):
-        self.upvotes.add(user)
+        if user in self.upvotes.all():
+            self.upvotes.remove(user)
+            self.save()
+        else:
+            self.upvotes.add(user)
         if user in self.downvotes.all():
             self.downvotes.remove(user)
         self.save()
     def downvote(self, user: User):
-        self.downvotes.add(user)
+        if user in self.downvotes.all():
+            self.downvotes.remove(user)
+            self.save()
+        else:
+            self.downvotes.add(user)
         if user in self.upvotes.all():
             self.upvotes.remove(user)
         self.save()
@@ -260,7 +268,6 @@ class Comment(models.Model):
     @property
     def get_votes(self):
         return self.upvotes.count() - self.downvotes.count()
-        
 class News(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()

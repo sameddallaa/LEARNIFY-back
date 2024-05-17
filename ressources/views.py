@@ -2,13 +2,18 @@ from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
-from .models import Course, Subject, Year, Chapter, TD, TP, Homework, Note, Quiz, Forum, Post, Other, Comment, News
+from .models import (Course, Subject, Year, Chapter,
+                     TD, TP, Homework, Note, Quiz, Forum,
+                     Post, Other, Comment, News, Question,
+                     Answer)
 from .serializers import (CourseSerializer, SubjectSerializer, ChapterSerializer, 
                           TDSerializer, TeacherSubjectsSerializer, TPSerializer,
                           NoteSerializer, HomeworkSerializer, CourseUploadSerializer,
                           QuizSerializer, ForumSerializer, PostSerializer, CommentSerializer,
                           TeacherSubjectsPerYearSerializer, OtherSerializer, NewsSerializer,
-                          ForumPostsSerializer, PostVoteSerializer)
+                          ForumPostsSerializer, PostVoteSerializer, PostCommentsSerializer,
+                          CommentVoteSerializer, FullQuizSerializer, QuestionSerializer, 
+                          AnswerSerializer)
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import IsEditorTeacherPermission, isTeacherPermission, IsStaffPermission, IsEditorTeacherOrAdminPermission
 from profiles.models import Teacher, User, Student
@@ -588,7 +593,60 @@ class QuizRetrieveView(APIView):
         serializer = QuizSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class FullQuizView(generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
+    lookup_field = 'id'
     
+    
+class AddQuestionView(APIView):
+    serializer_class = QuestionSerializer
+    def get(self, request, *args, **kwargs):
+        quiz = kwargs.get('id')
+        try:
+            quiz = Quiz.objects.get(id=quiz)
+        except Quiz.DoesNotExist:
+            return Response({'details': 'quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+        questions = Question.objects.filter(quiz=quiz)
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        quiz = kwargs.get('id')
+        try:
+            quiz = Quiz.objects.get(id=quiz)
+        except Quiz.DoesNotExist:
+            return Response({'details': 'quiz not found'}, status=status.HTTP_404_NOT_FOUND)
+        content = request.data.get('content')
+        question = Question.objects.create(quiz=quiz, content=content)
+        question.save()
+        return Response({'details': "success"}, status=status.HTTP_200_OK)
+    
+    
+class AddAnswerView(APIView):
+    serializer_class = AnswerSerializer
+    
+    def get(self, request, *args, **kwargs):
+        question = kwargs.get('id')
+        try:
+            question = Question.objects.get(id=question)
+        except Question.DoesNotExist:
+            return Response({'details': 'question not found'}, status=status.HTTP_404_NOT_FOUND)
+        answers = Answer.objects.filter(question=question)
+        serializer = AnswerSerializer(answers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        question = kwargs.get('id')
+        try:
+            question = Question.objects.get(id=question)
+        except Question.DoesNotExist:
+            return Response({'details': 'question not found'}, status=status.HTTP_404_NOT_FOUND)
+        content = request.data.get('content')
+        is_correct = request.data.get('is_correct') or False
+        answer = Answer.objects.create(question=question, content=content, is_correct=is_correct)
+        answer.save()
+        return Response({'details': "success"}, status=status.HTTP_200_OK)
 class ForumPostListView(APIView):
     def get(self, request, *args, **kwargs):
         subject = kwargs.get('subject')
@@ -610,8 +668,7 @@ class PostCommentListView(APIView):
             post = Post.objects.get(id=post)
         except Post.DoesNotExist:
             return Response({'details': 'post not found'}, status=status.HTTP_404_NOT_FOUND)
-        queryset = Comment.objects.filter(post=post)
-        serializer = CommentSerializer(queryset, many=True)
+        serializer = PostCommentsSerializer(post, )
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class PostVoteView(APIView):
@@ -634,11 +691,52 @@ class PostVoteView(APIView):
             return Response({'details': 'post not found'}, status=status.HTTP_404_NOT_FOUND)
         if request.data.get('type') == 'upvote':
             post.upvote(request.user)
+            return Response({'details': 'upvoted'}, status=status.HTTP_200_OK)
         elif request.data.get('type') == 'downvote':
-            post.downvotes(request.user)
-        # serializer = PostVoteSerializer(post)
-        return Response({'details': 'success'}, status=status.HTTP_200_OK)
+            post.downvote(request.user)
+            return Response({'details': 'downvoted'}, status=status.HTTP_200_OK)
+        return Response({'details': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+class CommentVoteView(APIView):
+    serializer_class = CommentVoteSerializer
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            id = kwargs.get('id')
+            comment = Comment.objects.get(id=id)
+        except Comment.DoesNotExist:
+            return Response({'details': 'comment not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentVoteSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            id = kwargs.get('id')
+            comment = Comment.objects.get(id=id)
+        except Comment.DoesNotExist:
+            return Response({'details': 'comment not found'}, status=status.HTTP_404_NOT_FOUND)
+        if request.data.get('type') == 'upvote':
+            comment.upvote(request.user)
+            return Response({'details': 'upvoted'}, status=status.HTTP_200_OK)
+        elif request.data.get('type') == 'downvote':
+            comment.downvote(request.user)
+            return Response({'details': 'downvoted'}, status=status.HTTP_200_OK)
+        return Response({'details': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class CommentAddView(APIView):
+    serializer_class = CommentSerializer
+    
+    def post(self, request, *args, **kwargs):
+        post = kwargs.get('id')
+        post = Post.objects.get(id=post)
+        user = request.user
+        content = request.data.get('content')
+        attachment = request.FILES.get('attachment') or None
         
+        comment = Comment.objects.create(post=post, author=user, content=content, attachment=attachment,)
+        comment.save()
+        
+        return Response({'details': 'comment added'}, status=status.HTTP_200_OK)
 class NewsView(generics.ListCreateAPIView):
     queryset = News.objects.all().order_by('date')
     serializer_class = NewsSerializer

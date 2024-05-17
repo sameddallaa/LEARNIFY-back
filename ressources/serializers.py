@@ -6,6 +6,7 @@ from .models import (Course, Subject, Chapter,
                      News)
 from profiles.models import Teacher, Year
 from profiles.serializers import UserSerializer, YearSerializer
+from django.utils import timezone
 class CourseSerializer(serializers.ModelSerializer):
     chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
     class Meta:
@@ -97,20 +98,48 @@ class NoteSerializer(serializers.ModelSerializer):
         
         
 class QuestionSerializer(serializers.ModelSerializer):
+    answers = serializers.SerializerMethodField()
+    
+    def get_answers(self, obj):
+        answers = Answer.objects.filter(question=obj)
+        serializer = AnswerSerializer(answers, many=True)
+        return serializer.data
     class Meta:
         model = Question
         fields = '__all__'
+        
 class QuizSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True, read_only=True)
     chapter_tag = serializers.IntegerField(source='chapter.number', read_only=True)
+    is_over = serializers.SerializerMethodField()
+    
+    def get_is_over(self, obj):
+        return obj.deadline < timezone.now()
     class Meta:
         model = Quiz
         fields = '__all__'
         
+        
+class FullQuizSerializer(serializers.ModelSerializer):
+    questions = serializers.SerializerMethodField()
+    def get_questions(self, obj):
+        questions = Question.objects.filter(quiz=obj)
+        return QuestionSerializer(questions, many=True)
+    
+    class Meta:
+        model = Quiz
+        fields = '__all__'
 class ForumSerializer(serializers.ModelSerializer):
     subject = serializers.CharField(source='subject', read_only=True)
     class Meta:
         model = Forum
+        fields = '__all__'
+        
+        
+class AnswerSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Answer
         fields = '__all__'
         
         
@@ -148,30 +177,69 @@ class PostVoteSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'title', 'upvotes', 'downvotes', 'votes']
         
+class CommentVoteSerializer(serializers.ModelSerializer):
+    votes = serializers.SerializerMethodField()
+    
+    def get_votes(self, obj):
+        votes = obj.get_votes
+        return votes
+    class Meta:
+        model = Comment
+        fields = ['id', 'upvotes', 'downvotes', 'votes']
+        
 class ForumPostsSerializer(serializers.ModelSerializer):
     subject_name = serializers.CharField(source='subject', read_only=True)
     posts = serializers.SerializerMethodField()
     
     def get_posts(self, obj):
-        posts = Post.objects.filter(forum=obj)
+        posts = Post.objects.filter(forum=obj).all().order_by('date')
         return PostSerializer(posts, many=True).data
     
     class Meta:
         model = Forum
         fields = '__all__'
 class CommentSerializer(serializers.ModelSerializer):
-    op_name = serializers.CharField(source='post.author', read_only=True)
+    commenter_role = serializers.SerializerMethodField()
     commenter_name = serializers.CharField(source='author', read_only=True)
-    og_post_title = serializers.CharField(source='post.title', read_only=True)
     votes = serializers.SerializerMethodField()
-    
     
     def get_votes(self, obj):
         return obj.get_votes
+    # og_post_title = serializers.CharField(source='post.title', read_only=True)
+    # votes = serializers.SerializerMethodField()
+    
+    
+    def get_commenter_role(self, obj):
+        commenter = obj.author
+        if commenter.is_student:
+            return 'student'
+        if commenter.is_teacher:
+            return 'teacher'
+        return 'admin'
+    # def get_votes(self, obj):
+    #     return obj.get_votes
     class Meta:
         model = Comment
         fields = '__all__'
         
+class PostCommentsSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author', read_only=True)
+    comments = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+    votes = serializers.SerializerMethodField()
+    
+    def get_votes(self, obj):
+        return obj.get_votes
+    
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+    
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(post=obj).order_by('-author__is_teacher')
+        return CommentSerializer(comments, many=True).data
+    class Meta:
+        model = Post
+        fields = '__all__'
 class OtherSerializer(serializers.ModelSerializer):
     subject = serializers.CharField(source='chapter.subject', read_only=True)
     class Meta:

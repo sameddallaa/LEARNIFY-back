@@ -42,4 +42,9 @@ urlpatterns = [
     path('news/<int:year>/', view=views.NewsView.as_view(), name='NewsView'),
     path('news/<int:pk>/detail/', view=views.NewsDetailView.as_view(), name='NewsDetailView'),
     path('posts/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
+    path('comments/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
+    path('comments/<int:id>/add/', view=views.CommentAddView.as_view(), name='CommentAddView'),
+    path('ressources/quizzes/<int:id>/', view=views.FullQuizView.as_view(), name='FullQuizView'),
+    path('ressources/quizzes/<int:id>/question/add/', view=views.AddQuestionView.as_view(), name='AddQuestionView'),
+    path('ressources/quizzes/<int:id>/answer/add/', view=views.AddAnswerView.as_view(), name='AddAnswerView')
 ]
