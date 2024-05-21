@@ -722,6 +722,22 @@ class CommentVoteView(APIView):
             comment.downvote(request.user)
             return Response({'details': 'downvoted'}, status=status.HTTP_200_OK)
         return Response({'details': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+class PostAddView(APIView):
+    serializer_class = PostSerializer
+    
+    def post(self, request, *args, **kwargs):
+        subject = kwargs.get('id')
+        forum = Forum.objects.get(subject=subject)
+        user = request.user
+        title = request.data.get('title')
+        content = request.data.get('content')
+        attachment = request.FILES.get('attachment') or None
+        
+        post = Post.objects.create(forum=forum, author=user, title=title, content=content, attachment=attachment,)
+        post.save()
+        
+        return Response({'details': 'post added'}, status=status.HTTP_200_OK)
     
 class CommentAddView(APIView):
     serializer_class = CommentSerializer

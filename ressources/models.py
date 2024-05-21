@@ -213,7 +213,7 @@ class Post(models.Model):
         return Comment.objects.filter(post=self).count()
     
     def __str__(self):
-        return f'{self.title} - {self.forum}'
+        return f'{self.title} - {self.forum} | Post by {self.author}'
     
     def upvote(self, user: User):
         if user in self.upvotes.all():

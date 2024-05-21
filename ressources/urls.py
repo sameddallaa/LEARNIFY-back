@@ -44,6 +44,7 @@ urlpatterns = [
     path('posts/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
     path('comments/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
     path('comments/<int:id>/add/', view=views.CommentAddView.as_view(), name='CommentAddView'),
+    path('posts/<int:id>/add/', view=views.PostAddView.as_view(), name='CommentAddView'),
     path('ressources/quizzes/<int:id>/', view=views.FullQuizView.as_view(), name='FullQuizView'),
     path('ressources/quizzes/<int:id>/question/add/', view=views.AddQuestionView.as_view(), name='AddQuestionView'),
     path('ressources/quizzes/<int:id>/answer/add/', view=views.AddAnswerView.as_view(), name='AddAnswerView')
