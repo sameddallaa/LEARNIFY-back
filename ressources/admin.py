@@ -1,8 +1,22 @@
 from django.contrib import admin
-from .models import (Course, Subject, Chapter,
-                     TD, TP, Homework, Note,
-                     Quiz, Question, Answer,
-                     Forum, Post, Comment, Other, News)
+from .models import (
+    Course,
+    Subject,
+    Chapter,
+    TD,
+    TP,
+    Homework,
+    Note,
+    Quiz,
+    Question,
+    Answer,
+    Forum,
+    Post,
+    Comment,
+    Other,
+    News,
+)
+
 # Register your models here.
 
 admin.site.register(Subject)

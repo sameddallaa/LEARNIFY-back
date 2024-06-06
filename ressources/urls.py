@@ -2,50 +2,227 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('ressources/subjects', view=views.SubjectsListView.as_view(), name='SubjectsListView'),
-    path('ressources/subjects/year/<int:year>', view=views.SubjectYearView.as_view(), name='SubjectsListView'),
-    path('ressources/subjects/<int:id>', view=views.SubjectsRetriveView.as_view(), name='SubjectsRetrieveView'),
-    path('ressources/subjects/create/', view=views.SubjectsCreateView.as_view(), name='SubjectsCreateView'),
-    path('ressouces/subjects/<int:subject>/courses/', view=views.SubjectCourseListView.as_view(), name='SubjectCourseListView'),
-    path('ressources/subjects/<int:id>/update/', view=views.SubjectsUpdateView.as_view(), name='SubjectsUpdateView'),
-    path('ressources/<int:id>/chapters/', view=views.ChapterView.as_view(), name='ChapterView'),
-    path('ressources/<int:subject>/chapters/<int:chapter>/edit/', view=views.ChapterEditView.as_view(), name='ChapterEditView'),
-    path('ressources/courses/', view=views.CoursesListView.as_view(), name='CoursesListView'),
-    path('ressources/course/<int:id>', view=views.CourseRetrieveView.as_view(), name='CourseRetrieveView'),
-    path('ressources/courses/<int:id>', view=views.CoursesRetriveView.as_view(), name='CoursesRetrieveView'),
-    path('ressources/td/<int:subject>/<int:chapter>/', view=views.TDRetrieveView.as_view(), name='TDRetrieveView'),
-    path('ressources/cours/<int:subject>/<int:chapter>/', view=views.ChapterCourseRetrieveView.as_view(), name='CoursRetrieveView'),
-    path('ressources/cours/<int:subject>/<int:chapter>/<int:cours>/delete/', view=views.ChapterCourseDeleteView.as_view(), name='CoursDeleteView'),
-    path('ressources/td/<int:subject>/<int:chapter>/<int:td>/delete/', view=views.ChapterTDDeleteView.as_view(), name='TDDeleteView'),
-    path('ressources/tp/<int:subject>/<int:chapter>/<int:tp>/delete/', view=views.ChapterTPDeleteView.as_view(), name='TPDeleteView'),
-    path('ressources/homework/<int:subject>/<int:chapter>/<int:homework>/delete/', view=views.ChapterHomeworkDeleteView.as_view(), name='HomeworkDeleteView'),
-    path('ressources/other/<int:subject>/<int:chapter>/<int:other>/delete/', view=views.ChapterOtherDeleteView.as_view(), name='OtherDeleteView'),
-    path('ressources/subjects/<int:subject>/td/', view=views.SubjectTDListView.as_view(), name='SubjectTDListView'),
-    path('ressources/subjects/<int:subject>/cours/', view=views.SubjectTDListView.as_view(), name='SubjectTDListView'),
-    path('ressources/tp/<int:subject>/<int:chapter>/', view=views.TPRetrieveView.as_view(), name='TPRetrieveView'),
-    path('ressources/subjects/<int:subject>/tp/', view=views.SubjectTPListView.as_view(), name='SubjectTPListView'),
-    path('ressources/quizzes/<int:subject>/<int:chapter>/', view=views.QuizRetrieveView.as_view(), name='QuizRetrieveView'),
-    path('ressources/subjects/<int:subject>/quizzes/', view=views.SubjectQuizListView.as_view(), name='SubjectQuizListView'),
-    path('ressources/homework/<int:subject>/<int:chapter>/', view=views.HomeworkRetrieveView.as_view(), name='HomeworkRetrieveView'),
-    path('ressources/subjects/<int:subject>/homework/', view=views.SubjectHomeworkListView.as_view(), name='SubjectHomeworkListView'),
-    path('ressources/other/<int:subject>/<int:chapter>/', view=views.OtherRetrieveView.as_view(), name='OtherRetrieveView'),
-    path('ressources/subjects/<int:subject>/other/', view=views.SubjectOtherListView.as_view(), name='SubjectOtherListView'),
-    path('ressources/courses/create/', view=views.CoursesCreateView.as_view(), name='CoursesCreateView'),
-    path('ressources/courses/<int:id>/delete/', view=views.CoursesDeleteView.as_view(), name='CoursesDeleteView'),
-    path('ressources/courses/<int:id>/update/', view=views.CoursesView.as_view(), name='CoursesUpdateView'),
-    path('ressources/<int:teacher>/subjects/', view=views.TeacherSubjectView.as_view(), name='TeacherSubjectView'),
-    path('teachers/<int:teacher>/subjects/', view=views.TeacherSubjectsView.as_view(), name='TeacherSubjectsView'),
-    path('teachers/<int:teacher>/<int:year>/subjects/', view=views.TeacherSubjectPerYearView.as_view(), name='TeacherSubjectPerYearView'),
-    path('students/<int:student>/subjects/<int:subject>/notes/', view=views.NoteRetrieveView.as_view(), name='NoteRetrieveView'),
-    path('ressources/forums/<int:subject>/',view=views.ForumPostListView.as_view(), name='ForumPostListView'),
-    path('ressources/forums/comments/<int:post>/', view=views.PostCommentListView.as_view(), name='PostCommentListView'),
-    path('news/<int:year>/', view=views.NewsView.as_view(), name='NewsView'),
-    path('news/<int:pk>/detail/', view=views.NewsDetailView.as_view(), name='NewsDetailView'),
-    path('posts/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
-    path('comments/<int:id>/vote/', view=views.PostVoteView.as_view(), name='PostVoteView'),
-    path('comments/<int:id>/add/', view=views.CommentAddView.as_view(), name='CommentAddView'),
-    path('posts/<int:id>/add/', view=views.PostAddView.as_view(), name='CommentAddView'),
-    path('ressources/quizzes/<int:id>/', view=views.FullQuizView.as_view(), name='FullQuizView'),
-    path('ressources/quizzes/<int:id>/question/add/', view=views.AddQuestionView.as_view(), name='AddQuestionView'),
-    path('ressources/quizzes/<int:id>/answer/add/', view=views.AddAnswerView.as_view(), name='AddAnswerView')
+    path(
+        "ressources/subjects",
+        view=views.SubjectsListView.as_view(),
+        name="SubjectsListView",
+    ),
+    path(
+        "ressources/subjects/year/<int:year>",
+        view=views.SubjectYearView.as_view(),
+        name="SubjectsListView",
+    ),
+    path(
+        "ressources/subjects/<int:id>",
+        view=views.SubjectsRetriveView.as_view(),
+        name="SubjectsRetrieveView",
+    ),
+    path(
+        "ressources/subjects/create/",
+        view=views.SubjectsCreateView.as_view(),
+        name="SubjectsCreateView",
+    ),
+    path(
+        "ressouces/subjects/<int:subject>/courses/",
+        view=views.SubjectCourseListView.as_view(),
+        name="SubjectCourseListView",
+    ),
+    path(
+        "ressources/subjects/<int:id>/update/",
+        view=views.SubjectsUpdateView.as_view(),
+        name="SubjectsUpdateView",
+    ),
+    path(
+        "ressources/<int:id>/chapters/",
+        view=views.ChapterView.as_view(),
+        name="ChapterView",
+    ),
+    path(
+        "ressources/<int:subject>/chapters/<int:chapter>/edit/",
+        view=views.ChapterEditView.as_view(),
+        name="ChapterEditView",
+    ),
+    path(
+        "ressources/courses/",
+        view=views.CoursesListView.as_view(),
+        name="CoursesListView",
+    ),
+    path(
+        "ressources/course/<int:id>",
+        view=views.CourseRetrieveView.as_view(),
+        name="CourseRetrieveView",
+    ),
+    path(
+        "ressources/courses/<int:id>",
+        view=views.CoursesRetriveView.as_view(),
+        name="CoursesRetrieveView",
+    ),
+    path(
+        "ressources/td/<int:subject>/<int:chapter>/",
+        view=views.TDRetrieveView.as_view(),
+        name="TDRetrieveView",
+    ),
+    path(
+        "ressources/cours/<int:subject>/<int:chapter>/",
+        view=views.ChapterCourseRetrieveView.as_view(),
+        name="CoursRetrieveView",
+    ),
+    path(
+        "ressources/cours/<int:subject>/<int:chapter>/<int:cours>/delete/",
+        view=views.ChapterCourseDeleteView.as_view(),
+        name="CoursDeleteView",
+    ),
+    path(
+        "ressources/td/<int:subject>/<int:chapter>/<int:td>/delete/",
+        view=views.ChapterTDDeleteView.as_view(),
+        name="TDDeleteView",
+    ),
+    path(
+        "ressources/tp/<int:subject>/<int:chapter>/<int:tp>/delete/",
+        view=views.ChapterTPDeleteView.as_view(),
+        name="TPDeleteView",
+    ),
+    path(
+        "ressources/homework/<int:subject>/<int:chapter>/<int:homework>/delete/",
+        view=views.ChapterHomeworkDeleteView.as_view(),
+        name="HomeworkDeleteView",
+    ),
+    path(
+        "ressources/other/<int:subject>/<int:chapter>/<int:other>/delete/",
+        view=views.ChapterOtherDeleteView.as_view(),
+        name="OtherDeleteView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/td/",
+        view=views.SubjectTDListView.as_view(),
+        name="SubjectTDListView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/cours/",
+        view=views.SubjectTDListView.as_view(),
+        name="SubjectTDListView",
+    ),
+    path(
+        "ressources/tp/<int:subject>/<int:chapter>/",
+        view=views.TPRetrieveView.as_view(),
+        name="TPRetrieveView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/tp/",
+        view=views.SubjectTPListView.as_view(),
+        name="SubjectTPListView",
+    ),
+    path(
+        "ressources/years/<int:year>/teachers/",
+        view=views.YearTeachersView.as_view(),
+        name="YearTeachersView",
+    ),
+    # path(
+    #     "ressources/quizzes/<int:subject>/<int:chapter>/",
+    #     view=views.QuizRetrieveView.as_view(),
+    #     name="QuizRetrieveView",
+    # ),
+    # path(
+    #     "ressources/subjects/<int:subject>/quizzes/",
+    #     view=views.SubjectQuizListView.as_view(),
+    #     name="SubjectQuizListView",
+    # ),
+    path(
+        "ressources/homework/<int:subject>/<int:chapter>/",
+        view=views.HomeworkRetrieveView.as_view(),
+        name="HomeworkRetrieveView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/homework/",
+        view=views.SubjectHomeworkListView.as_view(),
+        name="SubjectHomeworkListView",
+    ),
+    path(
+        "ressources/other/<int:subject>/<int:chapter>/",
+        view=views.OtherRetrieveView.as_view(),
+        name="OtherRetrieveView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/other/",
+        view=views.SubjectOtherListView.as_view(),
+        name="SubjectOtherListView",
+    ),
+    path(
+        "ressources/courses/create/",
+        view=views.CoursesCreateView.as_view(),
+        name="CoursesCreateView",
+    ),
+    path(
+        "ressources/courses/<int:id>/delete/",
+        view=views.CoursesDeleteView.as_view(),
+        name="CoursesDeleteView",
+    ),
+    path(
+        "ressources/courses/<int:id>/update/",
+        view=views.CoursesView.as_view(),
+        name="CoursesUpdateView",
+    ),
+    path(
+        "ressources/<int:teacher>/subjects/",
+        view=views.TeacherSubjectView.as_view(),
+        name="TeacherSubjectView",
+    ),
+    path(
+        "teachers/<int:teacher>/subjects/",
+        view=views.TeacherSubjectsView.as_view(),
+        name="TeacherSubjectsView",
+    ),
+    path(
+        "teachers/<int:teacher>/<int:year>/subjects/",
+        view=views.TeacherSubjectPerYearView.as_view(),
+        name="TeacherSubjectPerYearView",
+    ),
+    path(
+        "students/<int:student>/subjects/<int:subject>/notes/",
+        view=views.NoteRetrieveView.as_view(),
+        name="NoteRetrieveView",
+    ),
+    path(
+        "ressources/forums/<int:subject>/",
+        view=views.ForumPostListView.as_view(),
+        name="ForumPostListView",
+    ),
+    path(
+        "ressources/forums/comments/<int:post>/",
+        view=views.PostCommentListView.as_view(),
+        name="PostCommentListView",
+    ),
+    path("news/<int:year>/", view=views.NewsView.as_view(), name="NewsView"),
+    path(
+        "news/<int:pk>/detail/",
+        view=views.NewsDetailView.as_view(),
+        name="NewsDetailView",
+    ),
+    path(
+        "posts/<int:id>/vote/", view=views.PostVoteView.as_view(), name="PostVoteView"
+    ),
+    path(
+        "comments/<int:id>/vote/",
+        view=views.PostVoteView.as_view(),
+        name="PostVoteView",
+    ),
+    path(
+        "comments/<int:id>/add/",
+        view=views.CommentAddView.as_view(),
+        name="CommentAddView",
+    ),
+    path(
+        "posts/<int:id>/add/", view=views.PostAddView.as_view(), name="CommentAddView"
+    ),
+    # path(
+    #     "ressources/quizzes/<int:id>/",
+    #     view=views.FullQuizView.as_view(),
+    #     name="FullQuizView",
+    # ),
+    # path(
+    #     "ressources/quizzes/<int:id>/question/add/",
+    #     view=views.AddQuestionView.as_view(),
+    #     name="AddQuestionView",
+    # ),
+    # path('ressources/quizzes/<int:id>/answer/add/', view=views.AddAnswerView.as_view(), name='AddAnswerView')
 ]
