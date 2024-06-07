@@ -520,6 +520,10 @@ class OtherDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     serializer_class = OtherSerializer
     lookup_field = "id"
 
+class ChapterDeleteView(generics.RetrieveAPIView, generics.DestroyAPIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
+    lookup_field = "id"
 
 class TDRetrieveView(APIView):
     def get(self, request, *args, **kwargs):

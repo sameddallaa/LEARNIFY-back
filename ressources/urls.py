@@ -123,6 +123,16 @@ urlpatterns = [
         name="HomeworkDeleteView",
     ),
     path(
+        "ressources/other/<int:id>/delete/",
+        view=views.OtherDeleteView.as_view(),
+        name="OtherDeleteView",
+    ),
+    path(
+        "ressources/chapters/<int:id>/delete/",
+        view=views.ChapterDeleteView.as_view(),
+        name="ChapterDeleteView",
+    ),
+    path(
         "ressources/tp/<int:subject>/<int:chapter>/",
         view=views.TPRetrieveView.as_view(),
         name="TPRetrieveView",
