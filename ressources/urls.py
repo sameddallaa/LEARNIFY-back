@@ -8,6 +8,11 @@ urlpatterns = [
         name="SubjectsListView",
     ),
     path(
+        "ressources/subjects/<int:pk>/add_basic_teacher",
+        view=views.SubjectBasicTeacherAddView.as_view(),
+        name="SubjectsBasicTeacherAddView",
+    ),
+    path(
         "ressources/subjects/year/<int:year>",
         view=views.SubjectYearView.as_view(),
         name="SubjectsListView",

@@ -249,6 +249,12 @@ class FullQuizSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SubjectBasicTeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ["teachers"]
+
+
 class ForumSerializer(serializers.ModelSerializer):
     subject = serializers.CharField(source="subject", read_only=True)
 
