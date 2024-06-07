@@ -361,6 +361,11 @@ class UserListView(ListAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
+class UserDeleteView(generics.RetrieveAPIView, generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class StudentListView(ListAPIView):
     queryset = Student.objects.all().order_by("year__year", "group__number")
     serializer_class = StudentSerializer

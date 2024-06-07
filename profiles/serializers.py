@@ -116,6 +116,7 @@ class StudentSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source="user", read_only=True)
     group_tag = serializers.CharField(source="group.number", read_only=True)
     year_tag = serializers.CharField(source="year.year", read_only=True)
+    email = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = Student
@@ -124,7 +125,9 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class TeacherSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source="user", read_only=True)
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    email = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = Teacher
