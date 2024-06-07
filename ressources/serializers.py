@@ -177,15 +177,13 @@ class YearStudentsTeachersSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
 
     def get_teachers(self, obj):
-        teachers = []
         year = Year.objects.filter(year=obj.year).first()
         subjects = Subject.objects.filter(year=year)
-        for subject in subjects:
-            teachers.append(
-                TeacherSerializer(
-                    Subject.objects.get(id=subject.id).teachers, many=True
-                ).data
-            )
+        teachers = subjects.values_list("teachers", flat=True).distinct()
+        teachers = [
+            TeacherSerializer(Teacher.objects.get(id=teacher)).data
+            for teacher in teachers
+        ]
         return teachers
 
     def get_students(self, obj):
