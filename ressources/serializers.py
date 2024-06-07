@@ -39,6 +39,15 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return super().create(validated_data)
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        print(representation)
+        if not representation["content"].startswith("http://localhost:8000"):
+            representation["content"] = (
+                "http://localhost:8000" + representation["content"]
+            )
+        return representation
+
 
 class CourseUploadSerializer(serializers.ModelSerializer):
     content = serializers.FileField()
