@@ -239,7 +239,7 @@ class FileUploadTeacherAPIView(APIView):
             if unsuccessful_attempts:
                 return Response(
                     {
-                        "message": "Some teacher were not added successfully.",
+                        "message": "Some teachers were not added successfully.",
                         "unsuccessful_attempts": unsuccessful_attempts,
                     },
                     status=status.HTTP_207_MULTI_STATUS,

@@ -117,16 +117,16 @@ urlpatterns = [
         view=views.YearTeachersView.as_view(),
         name="YearTeachersView",
     ),
-    # path(
-    #     "ressources/quizzes/<int:subject>/<int:chapter>/",
-    #     view=views.QuizRetrieveView.as_view(),
-    #     name="QuizRetrieveView",
-    # ),
-    # path(
-    #     "ressources/subjects/<int:subject>/quizzes/",
-    #     view=views.SubjectQuizListView.as_view(),
-    #     name="SubjectQuizListView",
-    # ),
+    path(
+        "ressources/quizzes/<int:subject>/<int:chapter>/",
+        view=views.QuizRetrieveView.as_view(),
+        name="QuizRetrieveView",
+    ),
+    path(
+        "ressources/subjects/<int:subject>/quizzes/",
+        view=views.SubjectQuizListView.as_view(),
+        name="SubjectQuizListView",
+    ),
     path(
         "ressources/homework/<int:subject>/<int:chapter>/",
         view=views.HomeworkRetrieveView.as_view(),
@@ -214,15 +214,19 @@ urlpatterns = [
     path(
         "posts/<int:id>/add/", view=views.PostAddView.as_view(), name="CommentAddView"
     ),
-    # path(
-    #     "ressources/quizzes/<int:id>/",
-    #     view=views.FullQuizView.as_view(),
-    #     name="FullQuizView",
-    # ),
-    # path(
-    #     "ressources/quizzes/<int:id>/question/add/",
-    #     view=views.AddQuestionView.as_view(),
-    #     name="AddQuestionView",
-    # ),
-    # path('ressources/quizzes/<int:id>/answer/add/', view=views.AddAnswerView.as_view(), name='AddAnswerView')
+    path(
+        "ressources/quizzes/<int:id>/",
+        view=views.FullQuizView.as_view(),
+        name="FullQuizView",
+    ),
+    path(
+        "ressources/quizzes/<int:id>/question/add/",
+        view=views.AddQuestionView.as_view(),
+        name="AddQuestionView",
+    ),
+    path(
+        "ressources/quizzes/<int:id>/answer/add/",
+        view=views.AddAnswerView.as_view(),
+        name="AddAnswerView",
+    ),
 ]
