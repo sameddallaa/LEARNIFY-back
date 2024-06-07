@@ -14,7 +14,7 @@ def create_profile(sender, instance, created, **kwargs):
             student.save()
         elif instance.is_teacher:
             teacher = Teacher.objects.create(user=instance)
-        
+
 
 @receiver(post_delete, sender=Student)
 def delete_profile(sender, instance, **kwargs):

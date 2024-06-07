@@ -53,9 +53,11 @@ class SignupView(generics.GenericAPIView):
             student_profile = Student.objects.get(user=user)
             year = self.request.data.get("year")
             group = self.request.data.get("group")
-            student_profile.year = year
-            student_profile.group = group
-            student_profile.save()
+            student_profile.year, _ = Year.objects.get_or_create(year=year)
+            student_profile.group, _ = Group.objects.get_or_create(
+                number=group, year=student_profile.year
+            )
+            student_profile.save(year=year, group=group)
 
         elif user.is_teacher:
             teacher_profile = Teacher.objects.get(user=user)
@@ -229,11 +231,11 @@ class FileUploadTeacherAPIView(APIView):
                     teacher.degree = user["degree"]
                     teacher.save()
 
-                    user = find_among_users(users, "email", created_user.email)
-                    password = user["password"]
-                    user = User.objects.get(email=user["email"])
+                    # user = find_among_users(users, 'email', created_user.email)
+                    # password = user['password']
+                    # user = User.objects.get(email=user['email'])
 
-                    send_password_after_signup(password, user)
+                    # send_password_after_signup(password, user)
             if unsuccessful_attempts:
                 return Response(
                     {
@@ -360,8 +362,7 @@ class UserListView(ListAPIView):
 
 
 class StudentListView(ListAPIView):
-
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by("year__year", "group__number")
     serializer_class = StudentSerializer
 
 
