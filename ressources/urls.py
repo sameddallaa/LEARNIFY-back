@@ -168,10 +168,26 @@ urlpatterns = [
         name="SubjectHomeworkListView",
     ),
     path(
+        "ressources/quizzes/<int:subject>",
+        view=views.QuizListCreateView.as_view(),
+        name="QuizListCreateView",
+    ),
+    path(
+        "ressources/questions/<int:quiz>",
+        view=views.QuestionListCreateView.as_view(),
+        name="QuestionListCreateView",
+    ),
+    path(
+        "ressources/answers/<int:question>",
+        view=views.AnswerListCreateView.as_view(),
+        name="AnswerListCreateView",
+    ),
+    path(
         "ressources/other/<int:subject>/<int:chapter>/",
         view=views.OtherRetrieveView.as_view(),
         name="OtherRetrieveView",
     ),
+    path("ressources/news/", view=views.NewsListView.as_view(), name="NewsList"),
     path(
         "ressources/subjects/<int:subject>/other/",
         view=views.SubjectOtherListView.as_view(),

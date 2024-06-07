@@ -520,10 +520,12 @@ class OtherDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     serializer_class = OtherSerializer
     lookup_field = "id"
 
+
 class ChapterDeleteView(generics.RetrieveAPIView, generics.DestroyAPIView):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     lookup_field = "id"
+
 
 class TDRetrieveView(APIView):
     def get(self, request, *args, **kwargs):
@@ -841,6 +843,42 @@ class FullQuizView(
     lookup_field = "id"
 
 
+class QuizListCreateView(generics.ListCreateAPIView):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
+
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get("subject")
+        subject = Subject.objects.filter(id=subject).first()
+        quizzes = Quiz.objects.filter(chapter__subject=subject)
+        serializer = QuizSerializer(quizzes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class QuestionListCreateView(generics.ListCreateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+    def get(self, request, *args, **kwargs):
+        quiz = kwargs.get("quiz")
+        quiz = Quiz.objects.filter(id=quiz).first()
+        questions = Question.objects.filter(quiz=quiz)
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AnswerListCreateView(generics.ListCreateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+    def get(self, request, *args, **kwargs):
+        question = kwargs.get("question")
+        question = Question.objects.filter(id=question).first()
+        answers = Answer.objects.filter(question=question)
+        serializer = AnswerSerializer(answers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AddQuestionView(APIView):
     serializer_class = QuestionSerializer
 
@@ -1080,6 +1118,9 @@ class NewsDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
+class NewsListView(generics.ListAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
 
 class SubjectBasicTeacherAddView(generics.RetrieveAPIView, generics.UpdateAPIView):
     queryset = Subject.objects.all()

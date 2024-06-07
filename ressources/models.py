@@ -304,9 +304,7 @@ class News(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(
-        upload_to="news/images/", default="default/girlImg.svg", null=True, blank=True
-    )
+    image = models.ImageField(upload_to="news/images/", default="default/girlImg.svg")
     year = models.ForeignKey(Year, blank=True, null=True, on_delete=models.CASCADE)
     attachment = models.FileField(upload_to="news/attachments/", null=True, blank=True)
 
