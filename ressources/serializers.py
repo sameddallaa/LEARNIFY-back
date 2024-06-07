@@ -128,10 +128,17 @@ class SubjectSerializer(serializers.ModelSerializer):
         source="main_teacher.user.email", read_only=True
     )
     teacher_degree = serializers.CharField(source="main_teacher.degree", read_only=True)
+    teachers = serializers.SerializerMethodField()
 
     class Meta:
         model = Subject
         fields = "__all__"
+
+    def get_teachers(self, obj):
+        teachers = []
+        for teacher in obj.teachers.all():
+            teachers.append(TeacherSerializer(teacher).data)
+        return teachers
 
     def create(self, validated_data):
         if not validated_data.get("description"):

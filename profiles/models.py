@@ -202,9 +202,6 @@ class Student(models.Model):
     group = models.ForeignKey(Group, default=0, null=True, on_delete=models.CASCADE)
 
     def save(self, year=0, group=0, *args, **kwargs):
-        # year = kwargs.pop("year", 0)
-        # group = kwargs.pop("group", 0)
-        # print(self)
         year, _ = Year.objects.get_or_create(year=year)
         self.year = year
         group, _ = Group.objects.get_or_create(number=group, year=self.year)
