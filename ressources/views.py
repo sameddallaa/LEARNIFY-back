@@ -497,6 +497,30 @@ class CoursesDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
     # permission_classes = [permissions.IsAdminUser]
 
 
+class TDDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
+    queryset = TD.objects.all()
+    serializer_class = TDSerializer
+    lookup_field = "id"
+
+
+class TPDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
+    queryset = TP.objects.all()
+    serializer_class = TPSerializer
+    lookup_field = "id"
+
+
+class HomeworkDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
+    queryset = Homework.objects.all()
+    serializer_class = HomeworkSerializer
+    lookup_field = "id"
+
+
+class OtherDeleteView(generics.DestroyAPIView, generics.RetrieveAPIView):
+    queryset = Other.objects.all()
+    serializer_class = OtherSerializer
+    lookup_field = "id"
+
+
 class TDRetrieveView(APIView):
     def get(self, request, *args, **kwargs):
         subject = kwargs.get("subject")
