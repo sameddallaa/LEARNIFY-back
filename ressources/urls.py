@@ -43,6 +43,11 @@ urlpatterns = [
         name="SubjectsUpdateView",
     ),
     path(
+        "ressources/subjects/<int:subject>/remove_teacher",
+        view=views.SubjectRemoveTeacherView.as_view(),
+        name="SubjectRemoveTeacherView",
+    ),
+    path(
         "ressources/<int:id>/chapters/",
         view=views.ChapterView.as_view(),
         name="ChapterView",
