@@ -1155,6 +1155,7 @@ class SubjectRemoveTeacherView(APIView):
             {"success": "teacher removed successfully"}, status=status.HTTP_200_OK
         )
 
+
 class SubjectAddTeacherView(APIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
@@ -1174,6 +1175,49 @@ class SubjectAddTeacherView(APIView):
         return Response(
             {"success": "teacher added successfully"}, status=status.HTTP_200_OK
         )
+
+
+class SubjectRemoveMainTeacherView(APIView):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get("subject")
+        subject = Subject.objects.filter(id=subject).first()
+        serializer = SubjectSerializer(subject)
+        return Response({"subject": serializer.data}, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        subject = kwargs.get("subject")
+        subject = Subject.objects.filter(id=subject).first()
+        teacher = request.data.get("teacher")
+        teacher = Teacher.objects.filter(id=teacher).first()
+        subject.main_teacher = None
+        return Response(
+            {"success": "main teacher removed successfully"}, status=status.HTTP_200_OK
+        )
+
+
+class SubjectAddMainTeacherView(APIView):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+
+    def get(self, request, *args, **kwargs):
+        subject = kwargs.get("subject")
+        subject = Subject.objects.filter(id=subject).first()
+        serializer = SubjectSerializer(subject)
+        return Response({"subject": serializer.data}, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        subject = kwargs.get("subject")
+        subject = Subject.objects.filter(id=subject).first()
+        teacher = request.data.get("teacher")
+        teacher = Teacher.objects.filter(id=teacher).first()
+        subject.main_teacher = teacher
+        return Response(
+            {"success": "main teacher added successfully"}, status=status.HTTP_200_OK
+        )
+
 
 class YearTeachersView(generics.RetrieveAPIView):
     queryset = Year.objects.all()
