@@ -48,6 +48,11 @@ urlpatterns = [
         name="SubjectRemoveTeacherView",
     ),
     path(
+        "ressources/subjects/<int:subject>/add_teacher",
+        view=views.SubjectAddTeacherView.as_view(),
+        name="SubjectAddTeacherView",
+    ),
+    path(
         "ressources/<int:id>/chapters/",
         view=views.ChapterView.as_view(),
         name="ChapterView",
