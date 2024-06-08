@@ -256,6 +256,12 @@ class FullQuizSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SubjectTeachersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ["id", "teachers", "main_teacher"]
+
+
 class SubjectBasicTeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject

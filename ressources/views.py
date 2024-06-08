@@ -46,6 +46,7 @@ from .serializers import (
     AnswerSerializer,
     YearStudentsTeachersSerializer,
     SubjectBasicTeacherSerializer,
+    SubjectTeachersSerializer,
 )
 from rest_framework import generics, permissions, authentication
 from profiles.permissions import (
@@ -1118,13 +1119,20 @@ class NewsDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
+
 class NewsListView(generics.ListAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
+
 class SubjectBasicTeacherAddView(generics.RetrieveAPIView, generics.UpdateAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectBasicTeacherSerializer
+
+
+class SubjectTeachersDeleteView(generics.UpdateAPIView, generics.RetrieveAPIView):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectTeachersSerializer
 
 
 class YearTeachersView(generics.RetrieveAPIView):

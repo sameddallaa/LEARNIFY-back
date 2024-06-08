@@ -23,6 +23,11 @@ urlpatterns = [
         name="SubjectsRetrieveView",
     ),
     path(
+        "ressources/subjects/<int:pk>/detail",
+        view=views.SubjectTeachersDeleteView.as_view(),
+        name="SubjectsRetrieveView",
+    ),
+    path(
         "ressources/subjects/create/",
         view=views.SubjectsCreateView.as_view(),
         name="SubjectsCreateView",
